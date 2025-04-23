@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Download and Display Image</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        #downloadButton {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        #imageContainer img {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid black;
+        }
+    </style>
+</head>
+
+<body>
+
+    <button id="downloadButton">Download Image</button>
+    <div id="imageContainer"></div>
+
+    <script>
+        document.getElementById('downloadButton').addEventListener('click', async () => {
+            const formData = new FormData();
+            formData.append('filename', 'Screenshot 2024-10-01 213353.png'); // <-- replace with actual filename
+
+            try {
+                const response = await fetch('/download-file', {
+                    method: 'POST',
+                    credentials: 'include', // Important! To send cookies (for token)
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to download image');
+                }
+
+                const blob = await response.blob(); // Get binary data
+                const imageUrl = URL.createObjectURL(blob); // Create a URL for the blob
+
+                const img = document.createElement('img');
+                img.src = imageUrl;
+
+                const container = document.getElementById('imageContainer');
+                container.innerHTML = ''; // Clear previous image if any
+                container.appendChild(img);
+
+            } catch (error) {
+                console.error(error);
+                alert('Failed to download image');
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>

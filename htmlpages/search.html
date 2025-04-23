@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="w-64 border-r border-instagram-border fixed h-full bg-white z-10">
+        <div class="p-6">
+            <h1 class="text-2xl font-semibold instagram-logo">Instagram</h1>
+        </div>
+
+        <nav class="mt-2">
+            <a href="#" class="flex items-center px-6 py-3 hover:bg-gray-100 font-medium">
+                <i class="fa-solid fa-house text-xl w-6"></i>
+                <span class="ml-4">Home</span>
+            </a>
+            <a href="/search" class="flex items-center px-6 py-3 hover:bg-gray-100">
+                <i class="fa-solid fa-search text-xl w-6"></i>
+                <span class="ml-4">Search</span>
+            </a>
+            <p id="openModalBtn" class="cursor-pointer flex items-center px-6 py-3 hover:bg-gray-100">
+                <i class="fa-regular fa-square-plus text-xl w-6"></i>
+                <span class="ml-4">Create</span>
+            </p>
+            <a href="/profile" class="flex items-center px-6 py-3 hover:bg-gray-100">
+                <!-- <img src="/placeholder.svg?height=24&width=24" class="w-6 h-6 rounded-full" alt="Profile"> -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-user-icon lucide-user">
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                </svg>
+                <span class="ml-4">Profile</span>
+            </a>
+
+            <button id="sign-out" class="signout-btn flex items-center px-6 py-3 hover:bg-gray-100 w-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-log-out-icon lucide-log-out">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" x2="9" y1="12" y2="12" />
+                </svg>
+                <span class="ml-4"> Sign out</span>
+
+            </button>
+        </nav>
+    </div>
+</body>
+
+</html>

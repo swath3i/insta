@@ -307,3 +307,138 @@ async def getPostsOfUser(data: EmailRequest, response_class=JSONResponse):
         posts = [doc.to_dict() for doc in posts_ref]
     return JSONResponse(content={"posts": posts}, status_code=200)
 
+    
+@app.post("/getPostsOfFriend")
+async def getPostsOfFriend(data: EmailRequest, response_class=JSONResponse):
+    print("getting posts of user")
+    posts_ref = firebase_db.collection('Post').where('Username', '==', data.username).get()
+    if not posts_ref:
+        posts = []
+    else:
+        posts = [doc.to_dict() for doc in posts_ref]
+    return JSONResponse(content={"posts": posts}, status_code=200)
+
+    
+
+@app.post("/updateUserName")
+async def updateUserName(data: UsernameRequest , response_class=JSONResponse):
+
+    existing_user_query = firebase_db.collection('users').where('Username', '==', data.username).limit(1).get()
+
+    if existing_user_query:
+        # If username exists, return an error
+        return JSONResponse(content={"error": "Username already exists"}, status_code=400)
+
+
+    user_query = firebase_db.collection('users').where('email', '==', data.email).limit(1).get()
+    if not user_query:
+        return JSONResponse(content={"error": "User not found"}, status_code=404)
+
+    user_doc = user_query[0]
+    user_ref = firebase_db.collection('users').document(user_doc.id)
+
+    # Now update name and Username
+    user_ref.update({
+        "name": data.name, 
+        "Username": data.username
+    })
+
+    return JSONResponse(content={"message": "User updated successfully"}, status_code=200)
+
+@app.post("/addpost")
+async def checkandcreatenewuser(data: EmailRequest):
+    print("check user ", data)
+    user_ref = firebase_db.collection('users').where('Username', '==', data.username).limit(1).get()
+    if not user_ref:
+        firebase_db.collection('users').add({
+                "name": data.username,
+                "Username":data.username,
+                "joinedDate":time.strftime("%Y-%m-%dT%H:%M:%SZ",  time.gmtime()),
+                "followers":[],
+                "following":[],
+                "posts":[]
+            })
+        print("user created")
+    else:
+        print("user already exist")
+        pass
+    return 0
+
+
+@app.get("/getallusers")
+async def get_all_users():
+    user_ref = firebase_db.collection('users')
+    docs = user_ref.stream()
+    users = []
+    
+    for doc in docs:
+        user_data = doc.to_dict()
+        selected_data = {
+            "username": user_data.get("Username"),
+            "email": user_data.get("email"),
+            "profileName":user_data.get("name")
+        }
+        users.append(selected_data)
+    
+    return {"users": users}
+
+
+@app.post("/add-directory", response_class=RedirectResponse)
+async def addDirectoryHandler(request: Request):
+    id_token = request.cookies.get("token")
+    user_token= validateFirebaseToken(id_token)
+    if not user_token:
+      return RedirectResponse('/')
+    form = await request.form()
+    dir_name = form['dir_name']
+    if dir_name == '' or dir_name[-1] != '/':
+        return RedirectResponse('/')
+    addDirectory(dir_name)
+    return RedirectResponse('/', status_code=status.HTTP_302_FOUND)
+
+
+# handler that will take in a filename to download and will serve it to the user
+@app.post("/download-file", response_class=Response)
+async def downloadFileHandler(request: Request):
+    # there should be a token. Validate it and if invalid then redirect back to / as a basic security measure 
+    id_token= request.cookies.get("token")
+    user_token = validateFirebaseToken(id_token)
+    if not user_token:
+        return RedirectResponse('/')
+    # pull the form data and see what filename we have for download
+    form = await request.form()
+    filename = form['filename']
+    return Response (downloadBlob(filename))
+
+
+
+@app.post("/upload-file", response_class=RedirectResponse)
+async def uploadFileHandler(request: Request):
+    id_token = request.cookies.get("token")
+    user_token = validateFirebaseToken(id_token)
+    # print("user token ",user_token)
+    if not user_token:
+        return RedirectResponse('/test')
+    form = await request.form()
+    if form['file_name'].filename == '':
+        return RedirectResponse('/test', status_code=status.HTTP_302_FOUND)
+    
+    user = getuserfromemail(user_token['email'])
+    
+    addFile(form['file_name'],user,form['description'])
+    print(".filename = ",form['file_name'].filename) 
+    return RedirectResponse('/test', status_code=status.HTTP_302_FOUND)
+
+
+@app.post("/getuserposts", response_class=JSONResponse)
+async def getUserPostsHandler(request: Request, username: str = Form(...)):
+    id_token = request.cookies.get("token")
+    user_token = validateFirebaseToken(id_token)
+
+    if not user_token:
+        return RedirectResponse('/login', status_code=status.HTTP_302_FOUND)
+
+    posts = getUserPosts(username)
+    
+    return JSONResponse(content={"posts": posts})
+
