@@ -1,0 +1,792 @@
+{% extends "index.html" %}
+
+{% block content %}
+<style>
+    .modal-backdrop {
+        backdrop-filter: blur(5px);
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .image-preview {
+        max-height: 500px;
+        object-fit: contain;
+    }
+
+    .modal-content {
+        animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+<div class="w-[95%] flex flex-col ml-64">
+    <!-- Post Form  -->
+    <div id="modalBackdrop" class=" fixed inset-0 modal-backdrop hidden z-10 flex items-center justify-center">
+        <!-- Modal Content -->
+        <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 overflow-hidden">
+            <!-- Modal Header -->
+            <div class="border-b border-gray-200 p-4 flex justify-between items-center">
+                <button id="closeModalBtn" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                </button>
+                <h2 class="text-xl font-semibold text-center flex-grow">Create new post</h2>
+                <button id="submitBtn"
+                    class="text-blue-500 font-medium hover:text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled>
+                    Share
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="flex flex-col md:flex-row">
+                <!-- Left Side - Image Upload/Preview -->
+                <div
+                    class="w-full md:w-1/2 border-r border-gray-200 flex flex-col items-center justify-center p-4 bg-gray-50 min-h-[400px]">
+                    <div id="uploadContainer" class="flex flex-col items-center justify-center w-full h-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-400 mb-4" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <p class="text-gray-500 mb-4 text-center">Drag photos and videos here</p>
+                        <label for="imageUpload"
+                            class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded cursor-pointer transition duration-300">
+                            Select from computer
+                        </label>
+                        <input type="file" id="imageUpload" class="hidden" accept="image/jpeg, image/png">
+                    </div>
+                    <img id="imagePreview" class="hidden image-preview w-full h-full object-contain"
+                        src="/placeholder.svg" alt="Preview">
+                </div>
+
+                <!-- Right Side - Description -->
+                <div class="w-full md:w-1/2 p-4 flex flex-col">
+                    <!-- User Info -->
+                    <div class="flex items-center mb-4">
+                        <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                        </div>
+                        <span class="ml-2 font-medium" id="newpostusername">username</span>
+                    </div>
+
+                    <!-- Description Textarea -->
+                    <textarea id="description" class="w-full h-64 resize-none border-0 focus:ring-0 focus:outline-none"
+                        placeholder="Write a caption..."></textarea>
+
+                    <div class="text-right text-gray-400 text-sm">
+                        <span id="charCount">0</span>/2,200
+                    </div>
+
+                    <!-- Additional Options -->
+                    <!-- <div class="mt-auto space-y-4">
+                        <div class="flex justify-between items-center py-3 border-t border-gray-200">
+                            <span>Add location</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </div>
+                        <div class="flex justify-between items-center py-3 border-t border-gray-200">
+                            <span>Add collaborators</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Profile Header -->
+    <div class="container mx-auto max-w-4xl px-4 py-8">
+        <div class="flex flex-col md:flex-row">
+            <!-- Profile Picture -->
+            <div class="flex justify-center md:justify-start md:w-1/3 mb-4 md:mb-0">
+                <div class="w-24 h-24 md:w-36 md:h-36 rounded-full bg-gray-300" id="profile-pic"></div>
+            </div>
+
+            <!-- Profile Info -->
+            <div class="md:w-2/3">
+                <div class="flex flex-col md:flex-row md:items-center mb-4">
+                    <h1 class="text-xl md:mr-4 mb-2 md:mb-0" id="username">username</h1>
+                    <!-- <button class="bg-blue-500 text-white px-4 py-1 rounded font-medium text-sm">Follow</button> -->
+                </div>
+
+                <!-- Stats -->
+                <div class="flex space-x-4 mb-4">
+                    <div><span id="posts-count" class="font-semibold">0</span> posts</div>
+                    <a class="cursor-pointer" href="/followers">
+                        <span id="followers-count" class="font-semibold">0</span> followers
+                    </a>
+                    <a class="cursor-pointer" href="/following">
+                        <span id="following-count" class="font-semibold">0</span> following
+                    </a>
+                </div>
+
+                <!-- Bio -->
+                <div>
+                    <div class="font-semibold" id="profile-name">Profile Name</div>
+                    <!-- <div id="bio">Bio goes here...</div> -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Posts Grid -->
+        <div class="mt-8 border-t pt-4">
+            <div class="flex justify-center space-x-12 mb-4">
+                <div class="text-center border-t border-black pt-4">
+                    <i class="fas fa-th mr-1"></i> POSTS
+                </div>
+            </div>
+
+
+            <div class="flex justify-center items-middle">
+                <div role="status" id="status-spinner">
+                    <svg aria-hidden="true" class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                        viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                            fill="currentColor" />
+                        <path
+                            d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                            fill="currentFill" />
+                    </svg>
+                    <span class="sr-only">Loading...</span>
+                </div>
+
+            </div>
+
+
+            <div id="gallery-wrapper" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- Images will be dynamically added here -->
+            </div>
+
+            <!-- No Posts Message -->
+            <div id="no-posts-message" class="hidden text-center py-12">
+                <div class="text-2xl mb-2"><i class="fas fa-camera-retro"></i></div>
+                <h2 class="text-xl font-semibold mb-1">No Posts Yet</h2>
+                <p class="text-gray-500">When you share photos, they'll appear here.</p>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Overlay -->
+    <div id="popup-backdrop"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center z-10">
+        <!-- Comment Card -->
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl flex overflow-hidden">
+            <!-- Left Side - Image -->
+            <div class="w-2/5 border-r border-gray-800" id="popup-img-wrapper">
+                <!-- The clicked image will be displayed here -->
+            </div>
+
+            <!-- Right Side - Comments -->
+            <div class="w-3/5 flex flex-col h-[600px]">
+                <!-- Header -->
+                <div class="p-4 border-b flex justify-between items-center">
+                    <h2 class="text-xl font-bold">Comments</h2>
+                    <button id="popup-dismiss-btn" class="text-gray-500 hover:text-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Comments List -->
+                <div id="comments-list" class="flex-1 overflow-y-auto p-4 space-y-4">
+                    <!-- Comments will be added here dynamically -->
+                </div>
+
+                <!-- Comment Input -->
+                <div class="p-4 border-t">
+                    <div class="flex flex-col space-y-2">
+                        <div class="flex justify-between items-center">
+                            <!-- <label for="user-name-field" class="text-sm font-medium text-gray-700">Username</label> -->
+                            <span id="text-limit-counter" class="text-sm text-gray-500">0/200</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <!-- <input type="text" id="user-name-field" placeholder="Your username"
+                                class="flex-shrink-0 w-1/3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"> -->
+                            <input type="text" id="comment-text-field" placeholder="Add a comment..." maxlength="200"
+                                class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button id="submit-comment-btn"
+                                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Post</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+
+        var userEmail = ""
+        var userDetails = ""
+
+
+        const commentsDatabase = new Map();
+        let activePostId = null;
+
+        const profilePic = document.getElementById('profile-pic');
+        const navProfilePic = document.getElementById('nav-profile-pic');
+        const username = document.getElementById('username');
+        const profileName = document.getElementById('profile-name');
+        const bio = document.getElementById('bio');
+        const postsCount = document.getElementById('posts-count');
+        const followersCount = document.getElementById('followers-count');
+        const followingCount = document.getElementById('following-count');
+        const postsGrid = document.getElementById('posts-grid');
+        const noPostsMessage = document.getElementById('no-posts-message');
+
+        const galleryWrapper = document.getElementById('gallery-wrapper');
+        const popupBackdrop = document.getElementById('popup-backdrop');
+        const popupDismissBtn = document.getElementById('popup-dismiss-btn');
+        const commentsList = document.getElementById('comments-list');
+        const commentTextField = document.getElementById('comment-text-field');
+        const userNameField = document.getElementById('user-name-field');
+        const submitCommentBtn = document.getElementById('submit-comment-btn');
+        const textLimitCounter = document.getElementById('text-limit-counter');
+        const popupImgWrapper = document.getElementById('popup-img-wrapper');
+
+        // Close modal when clicking the close button or outside the modal
+        popupDismissBtn.addEventListener('click', closePopupFunction);
+        popupBackdrop.addEventListener('click', (e) => {
+            if (e.target === popupBackdrop) {
+                closePopupFunction();
+            }
+        });
+
+        function closePopupFunction() {
+            popupBackdrop.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+            activePostId = null;
+        }
+
+        // Update character count
+        commentTextField.addEventListener('input', () => {
+            const currentLength = commentTextField.value.length;
+            textLimitCounter.textContent = `${currentLength}/200`;
+        });
+
+        // Post a new comment
+        submitCommentBtn.addEventListener('click', submitNewComment);
+        commentTextField.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                submitNewComment();
+            }
+        });
+
+        async function submitNewComment() {
+            if (!activePostId) return;
+
+            const commentText = commentTextField.value.trim();
+            const email = userDetails.Username;
+
+            if (commentText) {
+                const commentTime = new Date()
+                const newComment = {
+                    email: email,
+                    text: commentText,
+                    timestamp: commentTime,
+                    activePostId: activePostId
+
+                };
+
+
+                const newCommentResponse = await fetch("/addCommentToPost", {
+                    method: "POST", headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ comment: newComment })
+                })
+
+
+                // Get or initialize comments array for this post
+                if (!commentsDatabase.has(activePostId)) {
+                    commentsDatabase.set(activePostId, []);
+                }
+
+                const updatedComment = {
+                    username: email,
+                    comment: commentText,
+                    time: commentTime,
+                    activePostId: activePostId
+                }
+
+                // Add to our comments array for this post
+                const comments = commentsDatabase.get(activePostId);
+                comments.unshift(updatedComment);
+
+                // Render comments
+                displayComments(activePostId);
+
+                // Clear inputs
+                commentTextField.value = '';
+                textLimitCounter.textContent = '0/200';
+            }
+        }
+
+        // Render comments in reverse chronological order for a specific post
+        function displayComments(postId) {
+            commentsList.innerHTML = '';
+
+            if (!commentsDatabase.has(postId)) {
+                commentsList.innerHTML = '<p class="text-gray-500 text-center py-4">No comments yet. Be the first to comment!</p>';
+                return;
+            }
+
+            const comments = commentsDatabase.get(postId);
+
+            if (comments.length === 0) {
+                commentsList.innerHTML = '<p class="text-gray-500 text-center py-4">No comments yet. Be the first to comment!</p>';
+                return;
+            }
+            comments.sort((a, b) => new Date(b.time) - new Date(a.time));
+            comments.forEach(comment => {
+                const commentElement = document.createElement('div');
+                commentElement.className = 'bg-gray-50 p-3 rounded-lg';
+
+                const header = document.createElement('div');
+                header.className = 'flex justify-between items-center mb-2';
+
+                const username = document.createElement('span');
+                username.className = 'font-medium text-blue-600';
+                username.textContent = comment.username;
+
+                const time = document.createElement('span');
+                time.className = 'text-xs text-gray-500';
+                time.textContent = formatTimeAgo(comment.time);
+
+                header.appendChild(username);
+                header.appendChild(time);
+
+                const text = document.createElement('p');
+                text.className = 'text-gray-700';
+                text.textContent = comment.comment;
+                console.log("comment ", comment.comment)
+                commentElement.appendChild(header);
+                commentElement.appendChild(text);
+
+                commentsList.appendChild(commentElement);
+            });
+        }
+
+        // Format date to a readable string
+        function formatTimeAgo(date) {
+            const now = new Date();
+            const dateObj = new Date(date); // convert string to Date object
+            const diffMs = now - dateObj;
+            const diffSec = Math.floor(diffMs / 1000);
+            const diffMin = Math.floor(diffSec / 60);
+            const diffHour = Math.floor(diffMin / 60);
+            const diffDay = Math.floor(diffHour / 24);
+
+            console.log("data is", dateObj);
+
+            if (diffSec < 60) {
+                return 'just now';
+            } else if (diffMin < 60) {
+                return `${diffMin} minute${diffMin > 1 ? 's' : ''} ago`;
+            } else if (diffHour < 24) {
+                return `${diffHour} hour${diffHour > 1 ? 's' : ''} ago`;
+            } else if (diffDay < 7) {
+                return `${diffDay} day${diffDay > 1 ? 's' : ''} ago`;
+            } else {
+                return dateObj.toLocaleDateString();
+            }
+        }
+
+        // Function to open the modal for a specific post
+        function showCommentPopup(postId, imageUrl) {
+            activePostId = postId;
+
+            // Set the image in the modal
+            popupImgWrapper.innerHTML = `<img src="${imageUrl}" alt="Post" class="w-[100%] h-[75%] mt-10">`;
+
+            console.log("post id in comments ", postId)
+            // Render comments for this post
+            displayComments(postId);
+
+            // Show the modal
+            popupBackdrop.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        async function loadGalleryImages(posts) {
+            const imageElements = await Promise.all(posts.map(async (post, index) => {
+                const formData = new FormData();
+                formData.append('filename', post.filename);
+                console.log("post ", post);
+
+                try {
+                    const response = await fetch('/download-file', {
+                        method: 'POST',
+                        credentials: 'include',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        console.error('Failed to download image for post', post.filename);
+                        return `<div class="aspect-square bg-gray-200 flex items-center justify-center text-red-500">Error loading image</div>`;
+                    }
+
+                    const blob = await response.blob();
+                    const imageUrl = URL.createObjectURL(blob);
+
+                    // Create a unique ID for this post
+                    const postId = post.post_id || post.filename || `post-${index}`;
+
+                    // Initialize empty comments array for this post if it doesn't exist
+                    if (!commentsDatabase.has(postId)) {
+                        commentsDatabase.set(postId, post.comments);
+                    }
+
+                    // Return the HTML for this image with a click handler
+                    return `
+                        <div class="aspect-square relative overflow-hidden cursor-pointer border border-gray p-2 rounded-lg" 
+                             data-post-id="${postId}" 
+                             data-image-url="${imageUrl}"
+                             onclick="showCommentPopup('${postId}', '${imageUrl}')">
+                            <img src="${imageUrl}" alt="Post" class="w-full h-full object-cover">
+                        </div>
+                    `;
+                } catch (error) {
+                    console.error('Error loading image:', error);
+                    return `<div class="aspect-square bg-gray-200 flex items-center justify-center text-red-500">Error loading image</div>`;
+                }
+            }));
+
+            // Join all the image HTML and insert into the container
+            galleryWrapper.innerHTML = imageElements.join('');
+            document.getElementById('status-spinner').classList.add('hidden');
+
+        }
+
+
+        function decodeJWT(token) {
+            try {
+                const payload = token.split('.')[1];
+                return JSON.parse(atob(payload));
+            } catch (error) {
+                return {};
+            }
+        }
+
+
+        function getAuthTokenFromCookies(cookieString) {
+            return cookieString
+                .split(';')
+                .map(entry => entry.trim().split('='))
+                .find(([key]) => key === 'token')?.[1] || "";
+        }
+
+        async function checkSession() {
+            console.log("check session")
+            const token = getAuthTokenFromCookies(document.cookie);
+            if (!token) {
+                location.href = "/"
+                return
+            }
+            userEmail = decodeJWT(token).email || "User";
+            return userEmail
+        }
+
+        // Fetch user profile data
+        async function fetchUserProfile(userEmail) {
+            try {
+
+                console.log("inside fetch user ", userEmail)
+                const userDetailsResponse = await fetch("/getUser", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ username: userEmail })
+                })
+                if (userDetailsResponse.status == 200) {
+
+                    const userDetailsJson = await userDetailsResponse.json();
+                    userDetails = userDetailsJson.user;
+                    console.log("user details ", userDetails.posts.length)
+                }
+                // const data = await response.json();
+                username.textContent = userDetails.Username;
+                profileName.textContent = userDetails.name;
+                // bio.textContent = data.bio;
+                profilePic.innerHTML = `<img src="https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg?semt=ais_hybrid&w=740" alt="Profile" class="w-full h-full rounded-full object-cover">`;
+
+                // Update profile pictures
+                if (userDetails.profileImage) {
+                    profilePic.innerHTML = `<img src="${data.profileImage}" alt="Profile" class="w-full h-full rounded-full object-cover">`;
+                    navProfilePic.innerHTML = `<img src="${data.profileImage}" alt="Profile" class="w-full h-full rounded-full object-cover">`;
+                }
+
+                // Update counts
+                postsCount.textContent = userDetails.posts.length;
+                followersCount.textContent = userDetails.followers.length;
+                followingCount.textContent = userDetails.following.length;
+                document.getElementById("newpostusername").textContent = userDetails.Username
+
+
+            } catch (error) {
+                console.error('Error fetching user profile:', error);
+            }
+        }
+
+        // Fetch posts
+        async function fetchPosts() {
+            try {
+                var posts = [];
+                document.getElementById('status-spinner').classList.remove('hidden');
+                const postResponse = await fetch("/getPostsOfUser", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ username: userEmail })
+                });
+
+                if (postResponse.status === 200) {
+                    const postsJson = await postResponse.json();
+                    posts = postsJson.posts;
+                    posts.sort((a, b) => new Date(b.Date) - new Date(a.Date));
+                    // console.log("posts ", posts);
+                    postsCount.textContent = posts.length;
+                }
+
+                if (posts?.length === 0) {
+                    // Show no posts message
+                    noPostsMessage.classList.remove('hidden');
+                    document.getElementById('status-spinner').classList.add('hidden');
+
+                    return;
+                }
+
+                loadGalleryImages(posts)
+
+                //     // Now for each post, download the actual image
+                //     const imageElements = await Promise.all(posts.map(async (post) => {
+                //         const formData = new FormData();
+                //         formData.append('filename', post.filename);  // assuming post has a filename field
+                //         console.log("post ", post)
+                //         const response = await fetch('/download-file', {
+                //             method: 'POST',
+                //             credentials: 'include',
+                //             body: formData
+                //         });
+
+                //         if (!response.ok) {
+                //             console.error('Failed to download image for post', post.filename);
+                //             return `<div class="aspect-square bg-gray-200 flex items-center justify-center text-red-500">Error loading image</div>`;
+                //             document.getElementById('status-spinner').classList.add('hidden');
+                //         }
+
+                //         const blob = await response.blob();
+                //         const imageUrl = URL.createObjectURL(blob);
+
+                //         return `
+                //     <div class="aspect-square  relative overflow-hidden cursor-pointer border border-gray p-2 rounded-lg ">
+                //         <img src="${imageUrl}" alt="Post" class="w-full h-full object-cover">
+                //     </div>
+                // `;
+                //     }));
+                //     document.getElementById('status-spinner').classList.add('hidden');
+                //     // Render all downloaded images
+                //     postsGrid.innerHTML = imageElements.join('');
+
+            } catch (error) {
+                console.error('Error fetching posts:', error);
+                document.getElementById('status-spinner').classList.add('hidden');
+                noPostsMessage.classList.remove('hidden');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            const userEmail = await checkSession();
+            fetchUserProfile(userEmail);
+            fetchPosts();
+        });
+    </script>
+    <script type="module" src="{{ url_for('static', path='/firebase-login.js') }}"></script>
+
+    <script>
+        // DOM Elements
+        var file = null
+        const openModalBtn = document.getElementById('openModalBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modalBackdrop = document.getElementById('modalBackdrop');
+        const imageUpload = document.getElementById('imageUpload');
+        const imagePreview = document.getElementById('imagePreview');
+        const uploadContainer = document.getElementById('uploadContainer');
+        const description = document.getElementById('description');
+        const charCount = document.getElementById('charCount');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Event Listeners
+        openModalBtn.addEventListener('click', openModal);
+        closeModalBtn.addEventListener('click', closeModal);
+        modalBackdrop.addEventListener('click', (e) => {
+            if (e.target === modalBackdrop) closeModal();
+        });
+        imageUpload.addEventListener('change', handleImageUpload);
+        description.addEventListener('input', updateCharCount);
+
+        // Functions
+        function openModal() {
+            modalBackdrop.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+
+        function closeModal() {
+            modalBackdrop.classList.add('hidden');
+            document.body.style.overflow = ''; // Re-enable scrolling
+
+            // Reset form
+            imagePreview.classList.add('hidden');
+            uploadContainer.classList.remove('hidden');
+            imageUpload.value = '';
+            description.value = '';
+            updateCharCount();
+        }
+
+        function handleImageUpload(e) {
+            file = e.target.files[0];
+            if (!file) return;
+
+            // Check if file is jpg or png
+            if (!['image/jpeg', 'image/png'].includes(file.type)) {
+                alert('Please select a JPG or PNG image.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                imagePreview.src = event.target.result;
+                imagePreview.classList.remove('hidden');
+                uploadContainer.classList.add('hidden');
+                submitBtn.disabled = false;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function updateCharCount() {
+            const count = description.value.length;
+            charCount.textContent = count;
+
+            // Enable submit button only if there's an image and text
+            if (!imagePreview.classList.contains('hidden')) {
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Form submission
+        submitBtn.addEventListener('click', function () {
+            // Here you would typically send the data to a server
+            // For this example, we'll just show an alert
+            // alert('Post created successfully!');
+            const formData = new FormData();
+            formData.append('file_name', file);
+            formData.append('description', description.value);
+            fetch('/upload-file', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('File uploaded successfully!');
+                        closeModal(); // Your existing function
+                    } else {
+                        alert('Failed to upload file.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error uploading:', error);
+                    alert('Error uploading file.');
+                });
+            // console.log("description ", description.value)
+        });
+
+        // Drag and drop functionality
+        const dropArea = document.getElementById('uploadContainer');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropArea.classList.add('bg-blue-50', 'border-blue-300');
+        }
+
+        function unhighlight() {
+            dropArea.classList.remove('bg-blue-50', 'border-blue-300');
+        }
+
+        dropArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const file = dt.files[0];
+
+            if (!file) return;
+
+            // Check if file is jpg or png
+            if (!['image/jpeg', 'image/png'].includes(file.type)) {
+                alert('Please select a JPG or PNG image.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                imagePreview.src = event.target.result;
+                imagePreview.classList.remove('hidden');
+                uploadContainer.classList.add('hidden');
+                submitBtn.disabled = false;
+            };
+            reader.readAsDataURL(file);
+        }
+    </script>
+</div>
+
+{% endblock %}

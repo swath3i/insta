@@ -442,3 +442,51 @@ async def getUserPostsHandler(request: Request, username: str = Form(...)):
     
     return JSONResponse(content={"posts": posts})
 
+
+@app.post("/addCommentToPost", response_class=JSONResponse)
+async def addCommentToPost(request: Request):
+    data = await request.json()  # Parse the incoming JSON body
+    # comment = data.get("comment")  # Extract the 'comment' object
+    # print("Received comment:", comment)  # Print the comment
+    new_comment_data = data.get("comment")
+    if not new_comment_data:
+        return JSONResponse(content={"error": "No comment provided"}, status_code=400)
+
+    post_id = new_comment_data.get("activePostId")
+    if not post_id:
+        return JSONResponse(content={"error": "No post ID provided"}, status_code=400)
+
+    # Fetch the post document from Firestore
+    posts_ref = firebase_db.collection("Post")
+    query = posts_ref.where("post_id", "==", post_id).limit(1)
+    results = query.stream()
+
+    post_doc = None
+    post_doc_id = None
+    for doc in results:
+        post_doc = doc.to_dict()
+        post_doc_id = doc.id
+        break
+
+    if not post_doc:
+        return JSONResponse(content={"error": "Post not found"}, status_code=404)
+
+    # Prepare the new comment
+    new_comment = {
+        "username": new_comment_data["email"],
+        "comment": new_comment_data["text"],
+        "time": new_comment_data["timestamp"],
+    }
+    print("new comment ",new_comment)
+    # Update the comments list
+    comments = post_doc.get("comments", [])
+    comments.append(new_comment)
+
+    # Save updated comments back to Firestore
+    post_ref = firebase_db.collection("Post").document(post_doc_id)
+    post_ref.update({
+        "comments": comments
+    })
+
+    return {"message": "Comment added successfully", "new_comment": new_comment}
+
