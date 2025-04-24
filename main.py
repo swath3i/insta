@@ -490,3 +490,60 @@ async def addCommentToPost(request: Request):
 
     return {"message": "Comment added successfully", "new_comment": new_comment}
 
+
+@app.post("/follow/{friend_username}")
+async def follow_user(friend_username: str, data: FollowRequest):
+    current_user = data.current_user
+    friendName = data.friendName
+    currentuserprofilename = data.currentuserprofilename
+    # Fetch user and friend documents
+    user_docs = firebase_db.collection('users').where('Username', '==', current_user).limit(1).get()
+    friend_docs = firebase_db.collection('users').where('Username', '==', friend_username).limit(1).get()
+
+    if not user_docs or not friend_docs:
+        raise HTTPException(status_code=404, detail="User or friend not found")
+
+    user_ref = user_docs[0].reference
+    friend_ref = friend_docs[0].reference
+
+    user_data = user_docs[0].to_dict()
+    friend_data = friend_docs[0].to_dict()
+
+    # Update user's following
+    if not any(f['username'] == friend_username for f in user_data.get('following', [])):
+        user_ref.update({
+            "following": firestore.ArrayUnion([{"username": friend_username, "profileName":friendName}])
+        })
+
+    # Update friend's followers
+    if not any(f['username'] == current_user for f in friend_data.get('followers', [])):
+        friend_ref.update({
+            "followers": firestore.ArrayUnion([{"username": current_user , "profileName":currentuserprofilename}])
+        })
+
+    return {"message": f"{current_user} followed {friend_username}"}
+
+
+@app.delete("/unfollow/{friend_username}")
+async def unfollow_user(friend_username: str, data: FollowRequest):
+    current_user = data.current_user
+    friendName = data.friendName
+    currentuserprofilename = data.currentuserprofilename
+    user_docs = firebase_db.collection('users').where('Username', '==', current_user).limit(1).get()
+    friend_docs = firebase_db.collection('users').where('Username', '==', friend_username).limit(1).get()
+
+    if not user_docs or not friend_docs:
+        raise HTTPException(status_code=404, detail="User or friend not found")
+
+    user_ref = user_docs[0].reference
+    friend_ref = friend_docs[0].reference
+
+    # Remove from following/followers
+    user_ref.update({
+        "following": firestore.ArrayRemove([{"username": friend_username}])
+    })
+    friend_ref.update({
+        "followers": firestore.ArrayRemove([{"username": current_user}])
+    })
+
+    return {"message": f"{current_user} unfollowed {friend_username}"}
