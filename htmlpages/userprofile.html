@@ -1,94 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "index.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instagram Profile</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .instagram-font {
-            font-family: 'Grand Hotel', cursive;
-        }
-    </style>
-    <style>
-        .modal-backdrop {
-            backdrop-filter: blur(5px);
-            background-color: rgba(0, 0, 0, 0.5);
-        }
+{% block content %}
+<style>
+    .modal-backdrop {
+        backdrop-filter: blur(5px);
+        background-color: rgba(0, 0, 0, 0.5);
+    }
 
-        .hidden {
-            display: none;
-        }
+    .hidden {
+        display: none;
+    }
 
-        .image-preview {
-            max-height: 500px;
-            object-fit: contain;
-        }
+    .image-preview {
+        max-height: 500px;
+        object-fit: contain;
+    }
 
-        .modal-content {
-            animation: fadeIn 0.3s;
+    .modal-content {
+        animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
-    </style>
-</head>
+    }
+</style>
+<div class="ml-64 w-[100%]">
 
-<body class="bg-gray-50 flex">
-    <!-- Navigation -->
-    <div class="w-64 border-r border-instagram-border  h-screen bg-white z-10">
-        <div class="p-6">
-            <h1 class="text-2xl font-semibold instagram-logo instagram-font">Instagram</h1>
-        </div>
-
-        <nav class="mt-2">
-            <a href="/dashboard" class="flex items-center px-6 py-3 hover:bg-gray-100 ">
-                <i class="fa-solid fa-house text-xl w-6"></i>
-                <span class="ml-4">Home</span>
-            </a>
-            <a href="#" class="flex items-center px-6 py-3 hover:bg-gray-100">
-                <i class="fa-solid fa-search text-xl w-6"></i>
-                <span class="ml-4">Search</span>
-            </a>
-            <p class="flex items-center cursor-pointer px-6 py-3 hover:bg-gray-100" id="openModalBtn">
-                <i class="fa-regular fa-square-plus text-xl w-6"></i>
-                <span class="ml-4">Create</span>
-            </p>
-            <p href="" class="flex items-center cursor-pointer px-6 py-3 hover:bg-gray-100">
-                <!-- <img src="/placeholder.svg?height=24&width=24" class="w-6 h-6 rounded-full" alt="Profile"> -->
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-user-icon lucide-user">
-                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                    <circle cx="12" cy="7" r="4" />
-                </svg>
-                <span class="ml-4 font-medium">Profile</span>
-            </p>
-            <button id="sign-out" class="signout-btn flex items-center px-6 py-3 hover:bg-gray-100 w-full">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-log-out-icon lucide-log-out">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                    <polyline points="16 17 21 12 16 7" />
-                    <line x1="21" x2="9" y1="12" y2="12" />
-                </svg>
-                <span class="ml-4"> Sign out</span>
-
-            </button>
-
-        </nav>
-    </div>
     <!-- Post Form  -->
     <div id="modalBackdrop" class="fixed inset-0 modal-backdrop hidden z-10 flex items-center justify-center">
         <!-- Modal Content -->
@@ -952,6 +897,6 @@
         }
     </script>
 
-</body>
+</div>
 
-</html>
+{% endblock %}
