@@ -547,3 +547,43 @@ async def unfollow_user(friend_username: str, data: FollowRequest):
     })
 
     return {"message": f"{current_user} unfollowed {friend_username}"}
+
+
+@app.post("/timelinePostsDataResponse")
+async def getUser(data: EmailRequest, response_class=JSONResponse):
+    print("fetching user")
+    # Step 1: Fetch the user
+    user_docs = firebase_db.collection('users').where('email', '==', data.username).limit(1).get()
+    if not user_docs:
+        return JSONResponse(content={"error": "User not found"}, status_code=404)
+
+    user_doc = user_docs[0]
+    user_data = user_doc.to_dict()
+    current_username = user_data['Username']
+    print("user data ",user_data)
+    # Step 2: Get the usernames of followings
+    following_usernames = [f['username'] for f in user_data.get('following', [])]
+    all_usernames = following_usernames + [current_username]  # Include self
+    print("all usernames ",all_usernames)
+    # Step 3: Query all posts of user and followings
+    all_posts = []
+    for username in all_usernames:
+        posts = firebase_db.collection('Post') \
+            .where('Username', '==', username) \
+            .get()
+        for post in posts:
+            post_data = post.to_dict()
+            post_data['post_id'] = post.id
+            # Parse the Date string to datetime for proper sorting
+            post_data['Date'] = datetime.strptime(post_data['Date'], "%Y-%m-%d %H:%M:%S")
+            all_posts.append(post_data)
+
+    # Step 4: Sort posts by Date descending and take top 50
+    sorted_posts = sorted(all_posts, key=lambda x: x['Date'], reverse=True)
+    top_50_posts = sorted_posts[:50]
+
+    # Convert Date back to string before returning
+    for post in top_50_posts:
+        post['Date'] = post['Date'].strftime("%Y-%m-%d %H:%M:%S")
+
+    return JSONResponse(content=top_50_posts)

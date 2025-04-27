@@ -796,7 +796,17 @@
                 case API_ENDPOINTS.currentUser:
                     return currentUser
                 case API_ENDPOINTS.posts:
-                    return postsData
+                    const timelinePostsDataResponse = await fetch("/timelinePostsDataResponse", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ username: userEmail })
+                    })
+                    const posts = await timelinePostsDataResponse.json();
+                    console.log("posts fetched ", posts);
+
+                    return posts
                 case API_ENDPOINTS.stories:
                     return storiesData
                 case API_ENDPOINTS.suggestedUsers:
@@ -854,22 +864,47 @@
         async function renderPosts() {
             const posts = await fetchData(API_ENDPOINTS.posts)
             const postsContainer = document.getElementById("posts-container")
-
+            console.log("posts in render", posts)
             // Sort posts in reverse chronological order
-            posts.sort((a, b) => {
-                // Simple sorting based on time string (in a real app, use timestamps)
-                if (a.time.includes("m") && b.time.includes("h")) return -1
-                if (a.time.includes("h") && b.time.includes("m")) return 1
-                if (a.time.includes("d") && !b.time.includes("d")) return 1
-                if (!a.time.includes("d") && b.time.includes("d")) return -1
+            // posts.sort((a, b) => {
+            //     // Simple sorting based on time string (in a real app, use timestamps)
+            //     if (a.time.includes("m") && b.time.includes("h")) return -1
+            //     if (a.time.includes("h") && b.time.includes("m")) return 1
+            //     if (a.time.includes("d") && !b.time.includes("d")) return 1
+            //     if (!a.time.includes("d") && b.time.includes("d")) return -1
 
-                // Extract numeric values for comparison
-                const aValue = Number.parseInt(a.time)
-                const bValue = Number.parseInt(b.time)
-                return bValue - aValue
-            })
+            //     // Extract numeric values for comparison
+            //     const aValue = Number.parseInt(a.time)
+            //     const bValue = Number.parseInt(b.time)
+            //     return bValue - aValue
+            // })
+            const imageUrls = []
 
-            posts.forEach((post) => {
+            for (const post of posts) {
+                const formData = new FormData();
+                formData.append('filename', post.filename);
+                console.log("post ", post);
+
+                const response = await fetch('/download-file', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+
+                const blob = await response.blob();
+                console.log("blob is ", blob.type); // Should log something like "image/png" or "image/jpeg"
+
+                const imageUrl = URL.createObjectURL(blob);
+                imageUrls.push(imageUrl); // Fix typo here too
+                post.imageUrl = imageUrl;
+            }
+
+
+            console.log("image urls ", imageUrls)
+
+            for (let i = 0; i < posts.length; i++) {
+                const post = posts[i];
+                console.log("post is ", post)
                 const postElement = document.createElement("div")
                 postElement.className = "border border-instagram-border rounded-lg bg-white mb-6"
                 postElement.dataset.postId = post.post_id
@@ -879,16 +914,16 @@
                 postHeader.className = "flex items-center p-3"
 
                 const userAvatar = document.createElement("img")
-                userAvatar.src = post.userAvatar
-                userAvatar.className = "w-8 h-8 rounded-full"
-                userAvatar.alt = post.username
+                userAvatar.src = post.userAvatar ? post.userAvatar : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                userAvatar.className = "w-8 h-8 roun    ded-full"
+                userAvatar.alt = post.Username
 
                 const usernameContainer = document.createElement("div")
                 usernameContainer.className = "ml-3 flex items-center"
 
                 const username = document.createElement("span")
                 username.className = "font-semibold"
-                username.textContent = post.username
+                username.textContent = post.Username
 
                 usernameContainer.appendChild(username)
 
@@ -901,7 +936,7 @@
 
                 const time = document.createElement("span")
                 time.className = "text-gray-500 text-sm ml-2"
-                time.textContent = "• " + post.time
+                time.textContent = "• " + post.Date
                 usernameContainer.appendChild(time)
 
                 const moreOptions = document.createElement("button")
@@ -914,9 +949,10 @@
 
                 // Post image
                 const postImage = document.createElement("img")
-                postImage.src = post.imageurl
+                postImage.src = post.imageUrl
                 postImage.className = "w-full object-cover"
-                postImage.alt = "Post by " + post.username
+                postImage.alt = "Post by " + post.Username
+                // console.log(); // Should log something like "image/png" or "image/jpeg"
 
                 // Post actions
                 const postActions = document.createElement("div")
@@ -925,33 +961,33 @@
                 const actionButtons = document.createElement("div")
                 actionButtons.className = "flex items-center space-x-4"
 
-                const likeButton = document.createElement("button")
-                likeButton.innerHTML = '<i class="fa-regular fa-heart text-2xl"></i>'
+                // const likeButton = document.createElement("button")
+                // likeButton.innerHTML = '<i class="fa-regular fa-heart text-2xl"></i>'
 
-                const commentButton = document.createElement("button")
-                commentButton.innerHTML = '<i class="fa-regular fa-comment text-2xl"></i>'
+                // const commentButton = document.createElement("button")
+                // commentButton.innerHTML = '<i class="fa-regular fa-comment text-2xl"></i>'
 
-                const shareButton = document.createElement("button")
-                shareButton.innerHTML = '<i class="fa-regular fa-paper-plane text-2xl"></i>'
+                // const shareButton = document.createElement("button")
+                // shareButton.innerHTML = '<i class="fa-regular fa-paper-plane text-2xl"></i>'
 
-                const saveButton = document.createElement("button")
-                saveButton.className = "ml-auto"
-                saveButton.innerHTML = '<i class="fa-regular fa-bookmark text-2xl"></i>'
+                // const saveButton = document.createElement("button")
+                // saveButton.className = "ml-auto"
+                // saveButton.innerHTML = '<i class="fa-regular fa-bookmark text-2xl"></i>'
 
-                actionButtons.appendChild(likeButton)
-                actionButtons.appendChild(commentButton)
-                actionButtons.appendChild(shareButton)
-                actionButtons.appendChild(saveButton)
+                // actionButtons.appendChild(likeButton)
+                // actionButtons.appendChild(commentButton)
+                // actionButtons.appendChild(shareButton)
+                // actionButtons.appendChild(saveButton)
 
-                // Likes count
+                // // Likes count
                 const likesCount = document.createElement("p")
                 likesCount.className = "font-semibold mt-2"
-                likesCount.textContent = formatLikes(post.likes) + " likes"
+                // likesCount.textContent = formatLikes(post.likes ? post.likes : 0) + " likes"
 
                 // Post description
                 const description = document.createElement("p")
                 description.className = "mt-1"
-                description.innerHTML = `<span class="font-semibold">${post.username}</span> ${post.description}`
+                description.innerHTML = `<span class="font-semibold">${post.Username}</span> ${post.description}`
 
                 postActions.appendChild(actionButtons)
                 postActions.appendChild(likesCount)
@@ -962,16 +998,17 @@
                 commentsSection.className = "px-3 pb-1"
 
                 // Sort comments in reverse chronological order
-                const sortedComments = [...post.comments].sort((a, b) => {
-                    // Simple sorting based on time string (in a real app, use timestamps)
-                    if (a.time.includes("m") && b.time.includes("h")) return -1
-                    if (a.time.includes("h") && b.time.includes("m")) return 1
+                const sortedComments = post.comments
+                // const sortedComments = [...post.comments].sort((a, b) => {
+                //     // Simple sorting based on time string (in a real app, use timestamps)
+                //     if (a.time.includes("m") && b.time.includes("h")) return -1
+                //     if (a.time.includes("h") && b.time.includes("m")) return 1
 
-                    // Extract numeric values for comparison
-                    const aValue = Number.parseInt(a.time)
-                    const bValue = Number.parseInt(b.time)
-                    return bValue - aValue
-                })
+                //     // Extract numeric values for comparison
+                //     const aValue = Number.parseInt(a.time)
+                //     const bValue = Number.parseInt(b.time)
+                //     return bValue - aValue
+                // })
 
                 // Show only first 5 comments initially
                 const visibleComments = sortedComments.slice(0, 5)
@@ -1038,14 +1075,14 @@
                 // Post time
                 const postTime = document.createElement("p")
                 postTime.className = "text-gray-400 text-xs uppercase mt-1 px-3 pb-3"
-                postTime.textContent = post.time
+                postTime.textContent = post.Date
 
                 // Add comment input
                 const addCommentSection = document.createElement("div")
                 addCommentSection.className = "border-t border-instagram-border p-3 flex items-center"
 
                 const emojiButton = document.createElement("button")
-                emojiButton.innerHTML = '<i class="fa-regular fa-face-smile text-2xl"></i>'
+                // emojiButton.innerHTML = '<i class="fa-regular fa-face-smile text-2xl"></i>'
 
                 const commentInput = document.createElement("input")
                 commentInput.type = "text"
@@ -1095,7 +1132,7 @@
                 postImage.addEventListener("click", () => openPostModal(post))
 
                 postsContainer.appendChild(postElement)
-            })
+            }
         }
 
         // Render suggested users
@@ -1194,11 +1231,13 @@
             const modalTime = document.getElementById("modal-time")
 
             // Set modal content
-            modalImage.src = post.imageurl
-            modalUserAvatar.src = post.userAvatar
-            modalUsername.textContent = post.username
-            modalLikes.textContent = formatLikes(post.likes) + " likes"
-            modalTime.textContent = post.time
+            console.log(" imageUrls post", post)
+
+            modalImage.src = post.imageUrl
+            modalUserAvatar.src = post.userAvatar ? post.userAvatar : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+            modalUsername.textContent = post.Username
+            // modalLikes.textContent = formatLikes(post.likes) + " likes"
+            modalTime.textContent = post.Date
 
             // Clear previous comments
             modalComments.innerHTML = ""
@@ -1208,14 +1247,14 @@
             descriptionElement.className = "flex mb-4"
 
             const descriptionAvatar = document.createElement("img")
-            descriptionAvatar.src = post.userAvatar
+            descriptionAvatar.src = post.userAvatar ? post.userAvatar : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
             descriptionAvatar.className = "w-8 h-8 rounded-full mr-3"
 
             const descriptionContent = document.createElement("div")
             descriptionContent.innerHTML = `
     <span class="font-semibold">${post.username}</span>
     <span class="ml-2">${post.description}</span>
-    <p class="text-xs text-gray-500 mt-1">${post.time}</p>
+    <p class="text-xs text-gray-500 mt-1">${post.Date}</p>
   `
 
             descriptionElement.appendChild(descriptionAvatar)
@@ -1251,22 +1290,17 @@
                 const commentContent = document.createElement("div")
                 commentContent.className = "flex-1"
                 commentContent.innerHTML = `
-      <div class="flex justify-between">
-        <div>
-          <span class="font-semibold">${comment.username}</span>
-          <span class="ml-2">${comment.comment}</span>
-        </div>
-        <button class="text-gray-500">
-          <i class="fa-regular fa-heart"></i>
-        </button>
-      </div>
-      <div class="flex text-xs text-gray-500 mt-1">
-        <span>${comment.time}</span>
-        <span class="mx-2">·</span>
-        <span>${comment.likes} likes</span>
-        <button class="ml-2">Reply</button>
-      </div>
-    `
+                  <div class="flex justify-between">
+                    <div>
+                      <span class="font-semibold">${comment.username}</span>
+                      <span class="ml-2">${comment.comment}</span>
+                    </div>
+                    <button class="text-gray-500">
+                      <i class="fa-regular fa-heart"></i>
+                    </button>
+                  </div>
+                
+                `
 
                 commentElement.appendChild(commentAvatar)
                 commentElement.appendChild(commentContent)
