@@ -142,10 +142,10 @@
                 <!-- Stats -->
                 <div class="flex space-x-4 mb-4">
                     <div><span id="posts-count" class="font-semibold">0</span> posts</div>
-                    <a class="cursor-pointer" href="/followers">
+                    <a class="cursor-pointer" href="/followers" id="clickfollowers">
                         <span id="followers-count" class="font-semibold">0</span> followers
                     </a>
-                    <a class="cursor-pointer" href="/following">
+                    <a class="cursor-pointer" href="/following" id="clickfollowing">
                         <span id="following-count" class="font-semibold">0</span> following
                     </a>
                 </div>
@@ -554,6 +554,9 @@
             const spinner = document.getElementById("followingbuttonspinner");
             if (friendUsername == currentUsername) {
                 button.classList.add('hidden')
+                const followersLink = document.getElementById('clickfollowers');
+                followersLink.setAttribute('href', '#');
+                // document.getElementById('clickfollowers').classList.add('hidden');
                 return
             }
             // Enable button and hide spinner

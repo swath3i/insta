@@ -126,14 +126,14 @@
             `
                 return
             }
-
+            followers.sort((a, b) => new Date(b.time) - new Date(a.time));
             // Create HTML for each follower
             followers.forEach((follower) => {
                 const followerCard = document.createElement("div")
                 followerCard.className = "px-4 py-3 flex items-center justify-between"
 
                 followerCard.innerHTML = `
-                <div class="flex items-center">
+                <a class="flex items-center cursor-pointer" href="/userprofile/${follower.username}">
                     <div class="h-10 w-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-lg">
                         ${follower.username.charAt(0).toUpperCase()}
                     </div>
@@ -141,7 +141,7 @@
                         <p class="text-sm font-semibold">${follower.username}</p>
                         <p class="text-sm text-gray-500">${follower.profileName}</p>
                     </div>
-                </div>
+                </a>
               
             `
 

@@ -264,7 +264,6 @@ async def checkandcreatenewuser(data: EmailRequest):
         firebase_db.collection('User').add({
                 "name": "",
                 "email":data.username,
-                "joinedDate":time.strftime("%Y-%m-%dT%H:%M:%SZ",  time.gmtime()),
                 "Username":"",
                 "followers":[],
                 "following":[],
@@ -559,13 +558,13 @@ async def follow_user(friend_username: str, data: FollowRequest):
     # Update user's following
     if not any(f['username'] == friend_username for f in user_data.get('following', [])):
         user_ref.update({
-            "following": firestore.ArrayUnion([{"username": friend_username, "profileName":friendName}])
+            "following": firestore.ArrayUnion([{"username": friend_username, "profileName":friendName ,"time":datetime.now().strftime("%Y-%m-%d %H:%M:%S")}])
         })
 
     # Update friend's followers
     if not any(f['username'] == current_user for f in friend_data.get('followers', [])):
         friend_ref.update({
-            "followers": firestore.ArrayUnion([{"username": current_user , "profileName":currentuserprofilename}])
+            "followers": firestore.ArrayUnion([{"username": current_user , "profileName":currentuserprofilename , "time":datetime.now().strftime("%Y-%m-%d %H:%M:%S")}])
         })
 
     return {"message": f"{current_user} followed {friend_username}"}
@@ -576,6 +575,7 @@ async def unfollow_user(friend_username: str, data: FollowRequest):
     current_user = data.current_user
     friendName = data.friendName
     currentuserprofilename = data.currentuserprofilename
+
     user_docs = firebase_db.collection('User').where('Username', '==', current_user).limit(1).get()
     friend_docs = firebase_db.collection('User').where('Username', '==', friend_username).limit(1).get()
 
@@ -585,15 +585,20 @@ async def unfollow_user(friend_username: str, data: FollowRequest):
     user_ref = user_docs[0].reference
     friend_ref = friend_docs[0].reference
 
-    # Remove from following/followers
-    user_ref.update({
-        "following": firestore.ArrayRemove([{"username": friend_username}])
-    })
-    friend_ref.update({
-        "followers": firestore.ArrayRemove([{"username": current_user}])
-    })
+    user_data = user_docs[0].to_dict()
+    friend_data = friend_docs[0].to_dict()
 
+    # Remove friend from current user's following
+    updated_following = [entry for entry in user_data.get("following", []) if entry.get("username") != friend_username]
+    user_ref.update({"following": updated_following})
+
+    # Remove current user from friend's followers
+    updated_followers = [entry for entry in friend_data.get("followers", []) if entry.get("username") != current_user]
+    friend_ref.update({"followers": updated_followers})
+
+    print(f"{current_user} unfollowed {friend_username}")
     return {"message": f"{current_user} unfollowed {friend_username}"}
+
 
 
 @app.post("/timelinePostsDataResponse")
