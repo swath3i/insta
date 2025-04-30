@@ -137,12 +137,12 @@ def downloadBlob(filename):
     
 def getuser(user_token):
     print("inside get user function")
-    user = firebase_db.collection("users").document(user_token['user_id'])
+    user = firebase_db.collection('User').document(user_token['user_id'])
     if not user.get().exists:
         user_data = {
             'name':'John Doe'
         }
-        firebase_db.collection('users').document(user_token['user_id']).set(user_data)
+        firebase_db.collection('User').document(user_token['user_id']).set(user_data)
 
     return user
 
@@ -158,7 +158,7 @@ def validateFirebaseToken(id_token):
     return user_token
 
 def getuserfromemail(email):
-    user_ref = firebase_db.collection('users').where('email', '==', email).limit(1).get()
+    user_ref = firebase_db.collection('User').where('email', '==', email).limit(1).get()
     user_data = {
             'name':'John Doe'
         }
@@ -259,9 +259,9 @@ async def renderfollowing(request: Request):
 @app.post("/checkandcreateuser")
 async def checkandcreatenewuser(data: EmailRequest):
     # print("check user ", data)
-    user_ref = firebase_db.collection('users').where('email', '==', data.username).limit(1).get()
+    user_ref = firebase_db.collection('User').where('email', '==', data.username).limit(1).get()
     if not user_ref:
-        firebase_db.collection('users').add({
+        firebase_db.collection('User').add({
                 "name": "",
                 "email":data.username,
                 "joinedDate":time.strftime("%Y-%m-%dT%H:%M:%SZ",  time.gmtime()),
@@ -280,7 +280,7 @@ async def checkandcreatenewuser(data: EmailRequest):
 @app.post("/getUser")
 async def getUser(data: EmailRequest , response_class=JSONResponse):
     print("getting usrr")
-    user_ref = firebase_db.collection('users').where('email', '==', data.username).limit(1).get()
+    user_ref = firebase_db.collection('User').where('email', '==', data.username).limit(1).get()
     if not user_ref:
         return JSONResponse(content={"error": "User not found"}, status_code=404)
     else:
@@ -290,7 +290,7 @@ async def getUser(data: EmailRequest , response_class=JSONResponse):
 @app.post("/getUserUsingUsername")
 async def getUser(data: EmailRequest , response_class=JSONResponse):
     print("getting usrr")
-    user_ref = firebase_db.collection('users').where('Username', '==', data.username).limit(1).get()
+    user_ref = firebase_db.collection('User').where('Username', '==', data.username).limit(1).get()
     if not user_ref:
         return JSONResponse(content={"error": "User not found"}, status_code=404)
     else:
@@ -323,19 +323,19 @@ async def getPostsOfFriend(data: EmailRequest, response_class=JSONResponse):
 @app.post("/updateUserName")
 async def updateUserName(data: UsernameRequest , response_class=JSONResponse):
 
-    existing_user_query = firebase_db.collection('users').where('Username', '==', data.username).limit(1).get()
+    existing_user_query = firebase_db.collection('User').where('Username', '==', data.username).limit(1).get()
 
     if existing_user_query:
         # If username exists, return an error
         return JSONResponse(content={"error": "Username already exists"}, status_code=400)
 
 
-    user_query = firebase_db.collection('users').where('email', '==', data.email).limit(1).get()
+    user_query = firebase_db.collection('User').where('email', '==', data.email).limit(1).get()
     if not user_query:
         return JSONResponse(content={"error": "User not found"}, status_code=404)
 
     user_doc = user_query[0]
-    user_ref = firebase_db.collection('users').document(user_doc.id)
+    user_ref = firebase_db.collection('User').document(user_doc.id)
 
     # Now update name and Username
     user_ref.update({
@@ -348,9 +348,9 @@ async def updateUserName(data: UsernameRequest , response_class=JSONResponse):
 @app.post("/addpost")
 async def checkandcreatenewuser(data: EmailRequest):
     print("check user ", data)
-    user_ref = firebase_db.collection('users').where('Username', '==', data.username).limit(1).get()
+    user_ref = firebase_db.collection('User').where('Username', '==', data.username).limit(1).get()
     if not user_ref:
-        firebase_db.collection('users').add({
+        firebase_db.collection('User').add({
                 "name": data.username,
                 "Username":data.username,
                 "joinedDate":time.strftime("%Y-%m-%dT%H:%M:%SZ",  time.gmtime()),
@@ -367,7 +367,7 @@ async def checkandcreatenewuser(data: EmailRequest):
 
 @app.get("/getallusers")
 async def get_all_users():
-    user_ref = firebase_db.collection('users')
+    user_ref = firebase_db.collection('User')
     docs = user_ref.stream()
     users = []
     
@@ -447,8 +447,8 @@ async def getUserPostsHandler(request: Request, username: str = Form(...)):
 async def addCommentToPost(request: Request):
     data = await request.json()  # Parse the incoming JSON body
     # comment = data.get("comment")  # Extract the 'comment' object
-    # print("Received comment:", comment)  # Print the comment
     new_comment_data = data.get("comment")
+    print("Received comment:", new_comment_data)  # Print the comment
     if not new_comment_data:
         return JSONResponse(content={"error": "No comment provided"}, status_code=400)
 
@@ -460,14 +460,61 @@ async def addCommentToPost(request: Request):
     posts_ref = firebase_db.collection("Post")
     query = posts_ref.where("post_id", "==", post_id).limit(1)
     results = query.stream()
-
+    print("active post id ",post_id, results)
     post_doc = None
     post_doc_id = None
     for doc in results:
         post_doc = doc.to_dict()
         post_doc_id = doc.id
         break
+    print("post doc ",post_doc)
+    if not post_doc:
+        return JSONResponse(content={"error": "Post not found"}, status_code=404)
 
+    # Prepare the new comment
+    new_comment = {
+        "username": new_comment_data["email"],
+        "comment": new_comment_data["text"],
+        "time": new_comment_data["timestamp"],
+    }
+    print("new comment ",new_comment)
+    # Update the comments list
+    comments = post_doc.get("comments", [])
+    comments.append(new_comment)
+
+    # Save updated comments back to Firestore
+    post_ref = firebase_db.collection("Post").document(post_doc_id)
+    post_ref.update({
+        "comments": comments
+    })
+
+    return {"message": "Comment added successfully", "new_comment": new_comment}
+
+@app.post("/addCommentToPostFromDashboard", response_class=JSONResponse)
+async def addCommentToPost(request: Request):
+    data = await request.json()  # Parse the incoming JSON body
+    # comment = data.get("comment")  # Extract the 'comment' object
+    new_comment_data = data.get("comment")
+    print("Received comment:", new_comment_data)  # Print the comment
+    if not new_comment_data:
+        return JSONResponse(content={"error": "No comment provided"}, status_code=400)
+
+    post_id = new_comment_data.get("activePostId")
+    if not post_id:
+        return JSONResponse(content={"error": "No post ID provided"}, status_code=400)
+
+    # Fetch the post document from Firestore
+    posts_ref = firebase_db.collection("Post")
+    doc_ref =  posts_ref.document(post_id)
+    doc = doc_ref.get()
+    post_doc = None
+    post_doc_id = None
+    if doc.exists:
+        post_doc = doc.to_dict()
+        post_doc_id = doc.id
+        print("post_doc_id:", post_doc_id)
+        print("post_doc:", post_doc)
+        print("post doc ",post_doc)
     if not post_doc:
         return JSONResponse(content={"error": "Post not found"}, status_code=404)
 
@@ -497,8 +544,8 @@ async def follow_user(friend_username: str, data: FollowRequest):
     friendName = data.friendName
     currentuserprofilename = data.currentuserprofilename
     # Fetch user and friend documents
-    user_docs = firebase_db.collection('users').where('Username', '==', current_user).limit(1).get()
-    friend_docs = firebase_db.collection('users').where('Username', '==', friend_username).limit(1).get()
+    user_docs = firebase_db.collection('User').where('Username', '==', current_user).limit(1).get()
+    friend_docs = firebase_db.collection('User').where('Username', '==', friend_username).limit(1).get()
 
     if not user_docs or not friend_docs:
         raise HTTPException(status_code=404, detail="User or friend not found")
@@ -529,8 +576,8 @@ async def unfollow_user(friend_username: str, data: FollowRequest):
     current_user = data.current_user
     friendName = data.friendName
     currentuserprofilename = data.currentuserprofilename
-    user_docs = firebase_db.collection('users').where('Username', '==', current_user).limit(1).get()
-    friend_docs = firebase_db.collection('users').where('Username', '==', friend_username).limit(1).get()
+    user_docs = firebase_db.collection('User').where('Username', '==', current_user).limit(1).get()
+    friend_docs = firebase_db.collection('User').where('Username', '==', friend_username).limit(1).get()
 
     if not user_docs or not friend_docs:
         raise HTTPException(status_code=404, detail="User or friend not found")
@@ -553,7 +600,7 @@ async def unfollow_user(friend_username: str, data: FollowRequest):
 async def getUser(data: EmailRequest, response_class=JSONResponse):
     print("fetching user")
     # Step 1: Fetch the user
-    user_docs = firebase_db.collection('users').where('email', '==', data.username).limit(1).get()
+    user_docs = firebase_db.collection('User').where('email', '==', data.username).limit(1).get()
     if not user_docs:
         return JSONResponse(content={"error": "User not found"}, status_code=404)
 

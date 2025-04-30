@@ -266,9 +266,9 @@
             <!-- Feed -->
             <div class="max-w-xl mx-auto py-4 w-full">
                 <!-- Stories -->
-                <div class="flex justify-between overflow-x-auto py-4 border-b border-instagram-border items-center">
+                <div class=" py-4 border-b border-instagram-border items-center">
                     <!-- <div id="stories-container" class="flex space-x-4"></div> -->
-                    <h1>Your feed</h1>
+                    <h1 class="text-center text-2xl">Your feed</h1>
                     <!-- <button id="openModalBtn"
                         class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-1 px-2 rounded-lg shadow-md transition duration-300 flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
@@ -278,6 +278,22 @@
                         Create new post
                     </button> -->
 
+                </div>
+                <div class="flex justify-center items-middle ">
+
+                    <div role="status" id="loadingposts" class="mt-24">
+                        <svg aria-hidden="true"
+                            class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                            viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                                fill="currentColor" />
+                            <path
+                                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                                fill="currentFill" />
+                        </svg>
+                        <span class="sr-only">Loading...</span>
+                    </div>
                 </div>
 
                 <!-- Posts -->
@@ -301,10 +317,10 @@
 
                 <!-- Suggested for you -->
                 <div class="mb-4">
-                    <div class="flex justify-between items-center mb-2">
+                    <!-- <div class="flex justify-between items-center mb-2">
                         <span class="text-gray-500 font-semibold text-sm">Suggested for you</span>
                         <a href="#" class="text-xs font-semibold">See All</a>
-                    </div>
+                    </div> -->
                     <div id="suggested-users-container" class="space-y-3"></div>
                 </div>
 
@@ -330,13 +346,14 @@
 
     <!-- Post Modal -->
     <div id="post-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
-        <div class="bg-white w-full max-w-4xl h-[90vh] flex rounded-lg overflow-hidden">
+        <div class="bg-white w-full max-w-4xl h-[90vh] flex rounded-lg overflow-hidden cursor-pointer">
             <div class="w-3/5 bg-black flex items-center justify-center">
                 <img id="modal-image" src="/placeholder.svg" class="max-h-full max-w-full" alt="Post">
             </div>
             <div class="w-2/5 flex flex-col">
                 <div class="p-4 border-b border-gray-200 flex items-center">
-                    <img id="modal-user-avatar" src="/placeholder.svg" class="w-8 h-8 rounded-full" alt="User">
+                    <img id="modal-user-avatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                        class="w-8 h-8 rounded-full" alt="User">
                     <span id="modal-username" class="ml-3 font-semibold"></span>
                     <button class="ml-auto">
                         <i class="fa-solid fa-ellipsis"></i>
@@ -344,19 +361,14 @@
                 </div>
                 <div id="modal-comments" class="flex-1 overflow-y-auto p-4"></div>
                 <div class="border-t border-gray-200 p-4">
-                    <div class="flex items-center space-x-4 mb-3">
-                        <button><i class="fa-regular fa-heart text-2xl"></i></button>
-                        <button><i class="fa-regular fa-comment text-2xl"></i></button>
-                        <button><i class="fa-regular fa-paper-plane text-2xl"></i></button>
-                        <button class="ml-auto"><i class="fa-regular fa-bookmark text-2xl"></i></button>
-                    </div>
+
                     <p id="modal-likes" class="font-semibold mb-1"></p>
                     <p id="modal-time" class="text-xs text-gray-500 mb-3"></p>
-                    <div class="flex items-center border-t border-gray-200 pt-3">
+                    <!-- <div class="flex items-center border-t border-gray-200 pt-3">
                         <i class="fa-regular fa-face-smile text-2xl mr-3"></i>
                         <input type="text" placeholder="Add a comment..." class="flex-1 outline-none" maxlength="200">
                         <button class="text-instagram-blue font-semibold ml-3">Post</button>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -615,8 +627,7 @@
                         document.getElementById("current-user-username").textContent = userDetails.Username
                         document.getElementById("newpostusername").textContent = userDetails.Username
                         document.getElementById("current-user-name").textContent = userDetails.name
-                        document.getElementById("current-user-avatar").src = userDetails.avatar ? userDetails.avatar : 'https://img.freepik.com/free-vector/user-blue-gradient_78370-4692.jpg'
-
+                        document.getElementById("current-user-avatar").src = userDetails.avatar ? userDetails.avatar : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
                     }
                 }
             }
@@ -642,7 +653,7 @@
         // }
 
         // Mock posts data
-        const postsData = [
+        var postsData = [
             {
                 post_id: "1",
                 username: "rvcjinsta",
@@ -805,7 +816,7 @@
                     })
                     const posts = await timelinePostsDataResponse.json();
                     console.log("posts fetched ", posts);
-
+                    postsData = posts
                     return posts
                 case API_ENDPOINTS.stories:
                     return storiesData
@@ -862,6 +873,7 @@
 
         // Render posts
         async function renderPosts() {
+            document.getElementById('loadingposts').classList.remove('hidden')
             const posts = await fetchData(API_ENDPOINTS.posts)
             const postsContainer = document.getElementById("posts-container")
             console.log("posts in render", posts)
@@ -1028,7 +1040,7 @@
                 visibleComments.forEach((comment) => {
                     const commentElement = document.createElement("div")
                     commentElement.className = "flex items-start mb-1"
-
+                    console.log("comment in 1031 ", comment)
                     const commentText = document.createElement("p")
                     commentText.className = "text-sm"
                     commentText.innerHTML = `<span class="font-semibold">${comment.username}</span> ${comment.comment}`
@@ -1038,7 +1050,7 @@
                     likeCommentButton.innerHTML = '<i class="fa-regular fa-heart text-xs"></i>'
 
                     commentElement.appendChild(commentText)
-                    commentElement.appendChild(likeCommentButton)
+                    // commentElement.appendChild(likeCommentButton)
                     commentsSection.appendChild(commentElement)
                 })
 
@@ -1054,6 +1066,7 @@
                         hiddenComments.forEach((comment) => {
                             const commentElement = document.createElement("div")
                             commentElement.className = "flex items-start mb-1"
+                            console.log("comment in 1057 ", comment)
 
                             const commentText = document.createElement("p")
                             commentText.className = "text-sm"
@@ -1108,6 +1121,7 @@
 
                 // Add new comment when post button is clicked
                 postCommentButton.addEventListener("click", () => {
+                    console.log("clciked ", commentInput.value.trim())
                     if (commentInput.value.trim()) {
                         addNewComment(post.post_id, commentInput.value)
                         commentInput.value = ""
@@ -1132,83 +1146,109 @@
                 postImage.addEventListener("click", () => openPostModal(post))
 
                 postsContainer.appendChild(postElement)
+
             }
+            document.getElementById('loadingposts').classList.add('hidden')
+
         }
 
-        // Render suggested users
-        async function renderSuggestedUsers() {
-            const suggestedUsers = await fetchData(API_ENDPOINTS.suggestedUsers)
-            const suggestedUsersContainer = document.getElementById("suggested-users-container")
+        // // Render suggested users
+        // async function renderSuggestedUsers() {
+        //     const suggestedUsers = await fetchData(API_ENDPOINTS.suggestedUsers)
+        //     const suggestedUsersContainer = document.getElementById("suggested-users-container")
 
-            suggestedUsers.forEach((user) => {
-                const userElement = document.createElement("div")
-                userElement.className = "flex items-center justify-between"
+        //     suggestedUsers.forEach((user) => {
+        //         const userElement = document.createElement("div")
+        //         userElement.className = "flex items-center justify-between"
 
-                const userInfo = document.createElement("div")
-                userInfo.className = "flex items-center"
+        //         const userInfo = document.createElement("div")
+        //         userInfo.className = "flex items-center"
 
-                const userAvatar = document.createElement("img")
-                userAvatar.src = user.avatar
-                userAvatar.className = "w-8 h-8 rounded-full"
-                userAvatar.alt = user.username
+        //         const userAvatar = document.createElement("img")
+        //         userAvatar.src = user.avatar
+        //         userAvatar.className = "w-8 h-8 rounded-full"
+        //         userAvatar.alt = user.username
 
-                const userDetails = document.createElement("div")
-                userDetails.className = "ml-3"
+        //         const userDetails = document.createElement("div")
+        //         userDetails.className = "ml-3"
 
-                const usernameContainer = document.createElement("div")
-                usernameContainer.className = "flex items-center"
+        //         const usernameContainer = document.createElement("div")
+        //         usernameContainer.className = "flex items-center"
 
-                const username = document.createElement("span")
-                username.className = "font-semibold text-sm"
-                username.textContent = user.username
+        //         const username = document.createElement("span")
+        //         username.className = "font-semibold text-sm"
+        //         username.textContent = user.username
 
-                usernameContainer.appendChild(username)
+        //         usernameContainer.appendChild(username)
 
-                if (user.verified) {
-                    const verifiedBadge = document.createElement("span")
-                    verifiedBadge.className = "ml-1 text-instagram-blue"
-                    verifiedBadge.innerHTML = '<i class="fa-solid fa-circle-check text-xs"></i>'
-                    usernameContainer.appendChild(verifiedBadge)
-                }
+        //         if (user.verified) {
+        //             const verifiedBadge = document.createElement("span")
+        //             verifiedBadge.className = "ml-1 text-instagram-blue"
+        //             verifiedBadge.innerHTML = '<i class="fa-solid fa-circle-check text-xs"></i>'
+        //             usernameContainer.appendChild(verifiedBadge)
+        //         }
 
-                const followInfo = document.createElement("p")
-                followInfo.className = "text-xs text-gray-500"
+        //         const followInfo = document.createElement("p")
+        //         followInfo.className = "text-xs text-gray-500"
 
-                if (user.followedBy) {
-                    followInfo.textContent = "Followed by " + user.followedBy
-                } else if (user.suggestedFor) {
-                    followInfo.textContent = "Suggested for " + user.suggestedFor
-                }
+        //         if (user.followedBy) {
+        //             followInfo.textContent = "Followed by " + user.followedBy
+        //         } else if (user.suggestedFor) {
+        //             followInfo.textContent = "Suggested for " + user.suggestedFor
+        //         }
 
-                userDetails.appendChild(usernameContainer)
-                userDetails.appendChild(followInfo)
+        //         userDetails.appendChild(usernameContainer)
+        //         userDetails.appendChild(followInfo)
 
-                userInfo.appendChild(userAvatar)
-                userInfo.appendChild(userDetails)
+        //         userInfo.appendChild(userAvatar)
+        //         userInfo.appendChild(userDetails)
 
-                const followButton = document.createElement("button")
-                followButton.className = "text-instagram-blue text-xs font-semibold"
-                followButton.textContent = "Follow"
+        //         const followButton = document.createElement("button")
+        //         followButton.className = "text-instagram-blue text-xs font-semibold"
+        //         followButton.textContent = "Follow"
 
-                userElement.appendChild(userInfo)
-                userElement.appendChild(followButton)
+        //         userElement.appendChild(userInfo)
+        //         userElement.appendChild(followButton)
 
-                suggestedUsersContainer.appendChild(userElement)
-            })
-        }
+        //         suggestedUsersContainer.appendChild(userElement)
+        //     })
+        // }
 
         // Add new comment to a post
-        function addNewComment(postId, commentText) {
+        async function addNewComment(postId, commentText) {
             // Find the post
+            console.log("insidne new comment")
             const post = postsData.find((p) => p.post_id === postId)
-
+            console.log("after post ", post, commentText, currentUser)
             if (post) {
                 // Create new comment
+                // const newComment = {
+                //     username: currentUser.email,
+                //     comment: commentText,
+                //     time: "now",
+                //     likes: 0,
+                // }
+
                 const newComment = {
-                    username: currentUser.username,
-                    comment: commentText,
-                    time: "now",
-                    likes: 0,
+                    email: currentUser.username,
+                    text: commentText,
+                    timestamp: new Date(),
+                    activePostId: postId
+
+                };
+
+                console.log("new comment ", newComment)
+
+                try {
+
+                    const newCommentResponse = await fetch("/addCommentToPostFromDashboard", {
+                        method: "POST", headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ comment: newComment })
+                    })
+                } catch (e) {
+                    console.log("error")
                 }
 
                 // Add to beginning of comments array (for reverse chronological order)
@@ -1247,7 +1287,7 @@
             descriptionElement.className = "flex mb-4"
 
             const descriptionAvatar = document.createElement("img")
-            descriptionAvatar.src = post.userAvatar ? post.userAvatar : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+            // descriptionAvatar.src = post.userAvatar ? post.userAvatar : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
             descriptionAvatar.className = "w-8 h-8 rounded-full mr-3"
 
             const descriptionContent = document.createElement("div")
@@ -1257,14 +1297,14 @@
     <p class="text-xs text-gray-500 mt-1">${post.Date}</p>
   `
 
-            descriptionElement.appendChild(descriptionAvatar)
-            descriptionElement.appendChild(descriptionContent)
+            // descriptionElement.appendChild(descriptionAvatar)
+            // descriptionElement.appendChild(descriptionContent)
             modalComments.appendChild(descriptionElement)
 
             // Add separator
-            const separator = document.createElement("hr")
-            separator.className = "my-4 border-gray-200"
-            modalComments.appendChild(separator)
+            // const separator = document.createElement("hr")
+            // separator.className = "my-4 border-gray-200"
+            // modalComments.appendChild(separator)
 
             // Sort comments in reverse chronological order
             const sortedComments = [...post.comments].sort((a, b) => {
@@ -1284,20 +1324,20 @@
                 commentElement.className = "flex mb-4"
 
                 const commentAvatar = document.createElement("img")
-                commentAvatar.src = "/placeholder.svg?height=32&width=32"
+                commentAvatar.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png"
                 commentAvatar.className = "w-8 h-8 rounded-full mr-3"
 
                 const commentContent = document.createElement("div")
                 commentContent.className = "flex-1"
+                console.log("comment in 1293 ", comment)
+
                 commentContent.innerHTML = `
                   <div class="flex justify-between">
                     <div>
                       <span class="font-semibold">${comment.username}</span>
                       <span class="ml-2">${comment.comment}</span>
                     </div>
-                    <button class="text-gray-500">
-                      <i class="fa-regular fa-heart"></i>
-                    </button>
+                    
                   </div>
                 
                 `
@@ -1325,9 +1365,9 @@
 
 
             // Render components
-            await renderStories()
+            // await renderStories()
             await renderPosts()
-            await renderSuggestedUsers()
+            // await renderSuggestedUsers()
         }
 
         // Start the app
@@ -1614,8 +1654,9 @@
             // Function to search users
             function searchUsers(searchTerm) {
                 // Filter users by profile name (matching the beginning)
+                console.log("search term ", searchTerm)
                 const filteredUsers = users.filter(user =>
-                    user.profileName.toLowerCase().startsWith(searchTerm.toLowerCase())
+                    user.profileName?.toLowerCase().startsWith(searchTerm.toLowerCase())
                 );
 
                 // Display results
@@ -1641,9 +1682,9 @@
                         <div class="insta-user-avatar flex-shrink-0">
                             <img 
                                 class="h-12 w-12 rounded-full object-cover" 
-                                src="${user.profilePic}" 
+                                src= "https://cdn-icons-png.flaticon.com/512/149/149071.png" 
                                 alt="User profile picture"
-                                onerror="this.onerror=null; this.src='https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg';"
+                                onerror="this.onerror=null; this.src= "https://cdn-icons-png.flaticon.com/512/149/149071.png";"
                                 />
 
                         </div>

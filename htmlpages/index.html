@@ -1176,8 +1176,9 @@
             // Function to search users
             function searchUsers(searchTerm) {
                 // Filter users by profile name (matching the beginning)
+                console.log("searchh term ", searchTerm)
                 const filteredUsers = users.filter(user =>
-                    user.profileName.toLowerCase().startsWith(searchTerm.toLowerCase())
+                    user.profileName?.toLowerCase().startsWith(searchTerm.toLowerCase())
                 );
 
                 // Display results
