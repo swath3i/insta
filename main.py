@@ -352,7 +352,6 @@ async def checkandcreatenewuser(data: EmailRequest):
         firebase_db.collection('User').add({
                 "name": data.username,
                 "Username":data.username,
-                "joinedDate":time.strftime("%Y-%m-%dT%H:%M:%SZ",  time.gmtime()),
                 "followers":[],
                 "following":[],
                 "posts":[]
