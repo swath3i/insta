@@ -34,12 +34,12 @@
     <script>
         document.getElementById('downloadButton').addEventListener('click', async () => {
             const formData = new FormData();
-            formData.append('filename', 'Screenshot 2024-10-01 213353.png'); // <-- replace with actual filename
+            formData.append('filename', 'Screenshot 2024-10-01 213353.png');
 
             try {
                 const response = await fetch('/download-file', {
                     method: 'POST',
-                    credentials: 'include', // Important! To send cookies (for token)
+                    credentials: 'include',
                     body: formData
                 });
 
@@ -47,14 +47,14 @@
                     throw new Error('Failed to download image');
                 }
 
-                const blob = await response.blob(); // Get binary data
-                const imageUrl = URL.createObjectURL(blob); // Create a URL for the blob
+                const blob = await response.blob();
+                const imageUrl = URL.createObjectURL(blob);
 
                 const img = document.createElement('img');
                 img.src = imageUrl;
 
                 const container = document.getElementById('imageContainer');
-                container.innerHTML = ''; // Clear previous image if any
+                container.innerHTML = '';
                 container.appendChild(img);
 
             } catch (error) {

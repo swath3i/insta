@@ -246,7 +246,6 @@
     </div>
 
     <script>
-        // DOM elements
 
         var userEmail = ""
         var userDetails = ""
@@ -276,7 +275,6 @@
         const textLimitCounter = document.getElementById('text-limit-counter');
         const popupImgWrapper = document.getElementById('popup-img-wrapper');
 
-        // Close modal when clicking the close button or outside the modal
         popupDismissBtn.addEventListener('click', closePopupFunction);
         popupBackdrop.addEventListener('click', (e) => {
             if (e.target === popupBackdrop) {
@@ -290,13 +288,11 @@
             activePostId = null;
         }
 
-        // Update character count
         commentTextField.addEventListener('input', () => {
             const currentLength = commentTextField.value.length;
             textLimitCounter.textContent = `${currentLength}/200`;
         });
 
-        // Post a new comment
         submitCommentBtn.addEventListener('click', submitNewComment);
         commentTextField.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
@@ -329,7 +325,6 @@
                 })
 
 
-                // Get or initialize comments array for this post
                 if (!commentsDatabase.has(activePostId)) {
                     commentsDatabase.set(activePostId, []);
                 }
@@ -341,20 +336,16 @@
                     activePostId: activePostId
                 }
 
-                // Add to our comments array for this post
                 const comments = commentsDatabase.get(activePostId);
                 comments.unshift(updatedComment);
 
-                // Render comments
                 displayComments(activePostId);
 
-                // Clear inputs
                 commentTextField.value = '';
                 textLimitCounter.textContent = '0/200';
             }
         }
 
-        // Render comments in reverse chronological order for a specific post
         function displayComments(postId) {
             commentsList.innerHTML = '';
 
@@ -399,10 +390,9 @@
             });
         }
 
-        // Format date to a readable string
         function formatTimeAgo(date) {
             const now = new Date();
-            const dateObj = new Date(date); // convert string to Date object
+            const dateObj = new Date(date);
             const diffMs = now - dateObj;
             const diffSec = Math.floor(diffMs / 1000);
             const diffMin = Math.floor(diffSec / 60);
@@ -424,18 +414,14 @@
             }
         }
 
-        // Function to open the modal for a specific post
         function showCommentPopup(postId, imageUrl) {
             activePostId = postId;
 
-            // Set the image in the modal
             popupImgWrapper.innerHTML = `<img src="${imageUrl}" alt="Post" class="w-[100%] h-[75%] mt-10">`;
 
             console.log("post id in comments ", postId)
-            // Render comments for this post
             displayComments(postId);
 
-            // Show the modal
             popupBackdrop.classList.remove('hidden');
             document.body.classList.add('overflow-hidden');
         }
@@ -461,15 +447,12 @@
                     const blob = await response.blob();
                     const imageUrl = URL.createObjectURL(blob);
 
-                    // Create a unique ID for this post
                     const postId = post.post_id || post.filename || `post-${index}`;
 
-                    // Initialize empty comments array for this post if it doesn't exist
                     if (!commentsDatabase.has(postId)) {
                         commentsDatabase.set(postId, post.comments);
                     }
 
-                    // Return the HTML for this image with a click handler
                     return `
                         <div class="aspect-square relative overflow-hidden cursor-pointer border border-gray p-2 rounded-lg" 
                              data-post-id="${postId}" 
@@ -484,7 +467,6 @@
                 }
             }));
 
-            // Join all the image HTML and insert into the container
             galleryWrapper.innerHTML = imageElements.join('');
             document.getElementById('status-spinner').classList.add('hidden');
 
@@ -519,7 +501,6 @@
             return userEmail
         }
 
-        // Fetch user profile data
         async function fetchUserProfile(userEmail) {
             try {
 
@@ -537,19 +518,15 @@
                     userDetails = userDetailsJson.user;
                     console.log("user details ", userDetails.posts.length)
                 }
-                // const data = await response.json();
                 username.textContent = userDetails.Username;
                 profileName.textContent = userDetails.name;
-                // bio.textContent = data.bio;
                 profilePic.innerHTML = `<img src="https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg?semt=ais_hybrid&w=740" alt="Profile" class="w-full h-full rounded-full object-cover">`;
 
-                // Update profile pictures
                 if (userDetails.profileImage) {
                     profilePic.innerHTML = `<img src="${data.profileImage}" alt="Profile" class="w-full h-full rounded-full object-cover">`;
                     navProfilePic.innerHTML = `<img src="${data.profileImage}" alt="Profile" class="w-full h-full rounded-full object-cover">`;
                 }
 
-                // Update counts
                 postsCount.textContent = userDetails.posts.length;
                 followersCount.textContent = userDetails.followers.length;
                 followingCount.textContent = userDetails.following.length;
@@ -561,7 +538,6 @@
             }
         }
 
-        // Fetch posts
         async function fetchPosts() {
             try {
                 var posts = [];
@@ -578,12 +554,10 @@
                     const postsJson = await postResponse.json();
                     posts = postsJson.posts;
                     posts.sort((a, b) => new Date(b.Date) - new Date(a.Date));
-                    // console.log("posts ", posts);
                     postsCount.textContent = posts.length;
                 }
 
                 if (posts?.length === 0) {
-                    // Show no posts message
                     noPostsMessage.classList.remove('hidden');
                     document.getElementById('status-spinner').classList.add('hidden');
 
@@ -592,36 +566,6 @@
 
                 loadGalleryImages(posts)
 
-                //     // Now for each post, download the actual image
-                //     const imageElements = await Promise.all(posts.map(async (post) => {
-                //         const formData = new FormData();
-                //         formData.append('filename', post.filename);  // assuming post has a filename field
-                //         console.log("post ", post)
-                //         const response = await fetch('/download-file', {
-                //             method: 'POST',
-                //             credentials: 'include',
-                //             body: formData
-                //         });
-
-                //         if (!response.ok) {
-                //             console.error('Failed to download image for post', post.filename);
-                //             return `<div class="aspect-square bg-gray-200 flex items-center justify-center text-red-500">Error loading image</div>`;
-                //             document.getElementById('status-spinner').classList.add('hidden');
-                //         }
-
-                //         const blob = await response.blob();
-                //         const imageUrl = URL.createObjectURL(blob);
-
-                //         return `
-                //     <div class="aspect-square  relative overflow-hidden cursor-pointer border border-gray p-2 rounded-lg ">
-                //         <img src="${imageUrl}" alt="Post" class="w-full h-full object-cover">
-                //     </div>
-                // `;
-                //     }));
-                //     document.getElementById('status-spinner').classList.add('hidden');
-                //     // Render all downloaded images
-                //     postsGrid.innerHTML = imageElements.join('');
-
             } catch (error) {
                 console.error('Error fetching posts:', error);
                 document.getElementById('status-spinner').classList.add('hidden');
@@ -629,7 +573,6 @@
             }
         }
 
-        // Initialize
         document.addEventListener('DOMContentLoaded', async () => {
             const userEmail = await checkSession();
             fetchUserProfile(userEmail);
@@ -639,7 +582,6 @@
     <script type="module" src="{{ url_for('static', path='/firebase-login.js') }}"></script>
 
     <script>
-        // DOM Elements
         var file = null
         const openModalBtn = document.getElementById('openModalBtn');
         const closeModalBtn = document.getElementById('closeModalBtn');
@@ -651,7 +593,6 @@
         const charCount = document.getElementById('charCount');
         const submitBtn = document.getElementById('submitBtn');
 
-        // Event Listeners
         openModalBtn.addEventListener('click', openModal);
         closeModalBtn.addEventListener('click', closeModal);
         modalBackdrop.addEventListener('click', (e) => {
@@ -660,17 +601,14 @@
         imageUpload.addEventListener('change', handleImageUpload);
         description.addEventListener('input', updateCharCount);
 
-        // Functions
         function openModal() {
             modalBackdrop.classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            document.body.style.overflow = 'hidden';
         }
 
         function closeModal() {
             modalBackdrop.classList.add('hidden');
-            document.body.style.overflow = ''; // Re-enable scrolling
-
-            // Reset form
+            document.body.style.overflow = '';
             imagePreview.classList.add('hidden');
             uploadContainer.classList.remove('hidden');
             imageUpload.value = '';
@@ -682,7 +620,6 @@
             file = e.target.files[0];
             if (!file) return;
 
-            // Check if file is jpg or png
             if (!['image/jpeg', 'image/png'].includes(file.type)) {
                 alert('Please select a JPG or PNG image.');
                 return;
@@ -702,17 +639,13 @@
             const count = description.value.length;
             charCount.textContent = count;
 
-            // Enable submit button only if there's an image and text
             if (!imagePreview.classList.contains('hidden')) {
                 submitBtn.disabled = false;
             }
         }
 
-        // Form submission
         submitBtn.addEventListener('click', function () {
-            // Here you would typically send the data to a server
-            // For this example, we'll just show an alert
-            // alert('Post created successfully!');
+
             const formData = new FormData();
             formData.append('file_name', file);
             formData.append('description', description.value);
@@ -723,7 +656,7 @@
                 .then(response => {
                     if (response.ok) {
                         alert('File uploaded successfully!');
-                        closeModal(); // Your existing function
+                        closeModal();
                     } else {
                         alert('Failed to upload file.');
                     }
@@ -732,10 +665,8 @@
                     console.error('Error uploading:', error);
                     alert('Error uploading file.');
                 });
-            // console.log("description ", description.value)
         });
 
-        // Drag and drop functionality
         const dropArea = document.getElementById('uploadContainer');
 
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -771,7 +702,6 @@
 
             if (!file) return;
 
-            // Check if file is jpg or png
             if (!['image/jpeg', 'image/png'].includes(file.type)) {
                 alert('Please select a JPG or PNG image.');
                 return;

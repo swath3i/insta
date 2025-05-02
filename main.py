@@ -394,16 +394,12 @@ async def addDirectoryHandler(request: Request):
     addDirectory(dir_name)
     return RedirectResponse('/', status_code=status.HTTP_302_FOUND)
 
-
-# handler that will take in a filename to download and will serve it to the user
 @app.post("/download-file", response_class=Response)
 async def downloadFileHandler(request: Request):
-    # there should be a token. Validate it and if invalid then redirect back to / as a basic security measure 
     id_token= request.cookies.get("token")
     user_token = validateFirebaseToken(id_token)
     if not user_token:
         return RedirectResponse('/')
-    # pull the form data and see what filename we have for download
     form = await request.form()
     filename = form['filename']
     return Response (downloadBlob(filename))
@@ -414,7 +410,6 @@ async def downloadFileHandler(request: Request):
 async def uploadFileHandler(request: Request):
     id_token = request.cookies.get("token")
     user_token = validateFirebaseToken(id_token)
-    # print("user token ",user_token)
     if not user_token:
         return RedirectResponse('/test')
     form = await request.form()
@@ -443,10 +438,9 @@ async def getUserPostsHandler(request: Request, username: str = Form(...)):
 
 @app.post("/addCommentToPost", response_class=JSONResponse)
 async def addCommentToPost(request: Request):
-    data = await request.json()  # Parse the incoming JSON body
-    # comment = data.get("comment")  # Extract the 'comment' object
+    data = await request.json() 
     new_comment_data = data.get("comment")
-    print("Received comment:", new_comment_data)  # Print the comment
+    print("Received comment:", new_comment_data) 
     if not new_comment_data:
         return JSONResponse(content={"error": "No comment provided"}, status_code=400)
 
@@ -476,11 +470,9 @@ async def addCommentToPost(request: Request):
         "time": new_comment_data["timestamp"],
     }
     print("new comment ",new_comment)
-    # Update the comments list
     comments = post_doc.get("comments", [])
     comments.append(new_comment)
 
-    # Save updated comments back to Firestore
     post_ref = firebase_db.collection("Post").document(post_doc_id)
     post_ref.update({
         "comments": comments
@@ -490,10 +482,9 @@ async def addCommentToPost(request: Request):
 
 @app.post("/addCommentToPostFromDashboard", response_class=JSONResponse)
 async def addCommentToPost(request: Request):
-    data = await request.json()  # Parse the incoming JSON body
-    # comment = data.get("comment")  # Extract the 'comment' object
+    data = await request.json() 
     new_comment_data = data.get("comment")
-    print("Received comment:", new_comment_data)  # Print the comment
+    print("Received comment:", new_comment_data) 
     if not new_comment_data:
         return JSONResponse(content={"error": "No comment provided"}, status_code=400)
 
@@ -501,7 +492,6 @@ async def addCommentToPost(request: Request):
     if not post_id:
         return JSONResponse(content={"error": "No post ID provided"}, status_code=400)
 
-    # Fetch the post document from Firestore
     posts_ref = firebase_db.collection("Post")
     doc_ref =  posts_ref.document(post_id)
     doc = doc_ref.get()
@@ -516,18 +506,15 @@ async def addCommentToPost(request: Request):
     if not post_doc:
         return JSONResponse(content={"error": "Post not found"}, status_code=404)
 
-    # Prepare the new comment
     new_comment = {
         "username": new_comment_data["email"],
         "comment": new_comment_data["text"],
         "time": new_comment_data["timestamp"],
     }
     print("new comment ",new_comment)
-    # Update the comments list
     comments = post_doc.get("comments", [])
     comments.append(new_comment)
 
-    # Save updated comments back to Firestore
     post_ref = firebase_db.collection("Post").document(post_doc_id)
     post_ref.update({
         "comments": comments
@@ -541,7 +528,6 @@ async def follow_user(friend_username: str, data: FollowRequest):
     current_user = data.current_user
     friendName = data.friendName
     currentuserprofilename = data.currentuserprofilename
-    # Fetch user and friend documents
     user_docs = firebase_db.collection('User').where('Username', '==', current_user).limit(1).get()
     friend_docs = firebase_db.collection('User').where('Username', '==', friend_username).limit(1).get()
 
@@ -554,13 +540,11 @@ async def follow_user(friend_username: str, data: FollowRequest):
     user_data = user_docs[0].to_dict()
     friend_data = friend_docs[0].to_dict()
 
-    # Update user's following
     if not any(f['username'] == friend_username for f in user_data.get('following', [])):
         user_ref.update({
             "following": firestore.ArrayUnion([{"username": friend_username, "profileName":friendName ,"time":datetime.now().strftime("%Y-%m-%d %H:%M:%S")}])
         })
 
-    # Update friend's followers
     if not any(f['username'] == current_user for f in friend_data.get('followers', [])):
         friend_ref.update({
             "followers": firestore.ArrayUnion([{"username": current_user , "profileName":currentuserprofilename , "time":datetime.now().strftime("%Y-%m-%d %H:%M:%S")}])
@@ -587,11 +571,8 @@ async def unfollow_user(friend_username: str, data: FollowRequest):
     user_data = user_docs[0].to_dict()
     friend_data = friend_docs[0].to_dict()
 
-    # Remove friend from current user's following
     updated_following = [entry for entry in user_data.get("following", []) if entry.get("username") != friend_username]
     user_ref.update({"following": updated_following})
-
-    # Remove current user from friend's followers
     updated_followers = [entry for entry in friend_data.get("followers", []) if entry.get("username") != current_user]
     friend_ref.update({"followers": updated_followers})
 
@@ -603,7 +584,6 @@ async def unfollow_user(friend_username: str, data: FollowRequest):
 @app.post("/timelinePostsDataResponse")
 async def getUser(data: EmailRequest, response_class=JSONResponse):
     print("fetching user")
-    # Step 1: Fetch the user
     user_docs = firebase_db.collection('User').where('email', '==', data.username).limit(1).get()
     if not user_docs:
         return JSONResponse(content={"error": "User not found"}, status_code=404)
@@ -612,11 +592,9 @@ async def getUser(data: EmailRequest, response_class=JSONResponse):
     user_data = user_doc.to_dict()
     current_username = user_data['Username']
     print("user data ",user_data)
-    # Step 2: Get the usernames of followings
     following_usernames = [f['username'] for f in user_data.get('following', [])]
-    all_usernames = following_usernames + [current_username]  # Include self
+    all_usernames = following_usernames + [current_username] 
     print("all usernames ",all_usernames)
-    # Step 3: Query all posts of user and followings
     all_posts = []
     for username in all_usernames:
         posts = firebase_db.collection('Post') \
@@ -625,15 +603,12 @@ async def getUser(data: EmailRequest, response_class=JSONResponse):
         for post in posts:
             post_data = post.to_dict()
             post_data['post_id'] = post.id
-            # Parse the Date string to datetime for proper sorting
             post_data['Date'] = datetime.strptime(post_data['Date'], "%Y-%m-%d %H:%M:%S")
             all_posts.append(post_data)
 
-    # Step 4: Sort posts by Date descending and take top 50
     sorted_posts = sorted(all_posts, key=lambda x: x['Date'], reverse=True)
     top_50_posts = sorted_posts[:50]
 
-    # Convert Date back to string before returning
     for post in top_50_posts:
         post['Date'] = post['Date'].strftime("%Y-%m-%d %H:%M:%S")
 

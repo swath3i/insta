@@ -125,7 +125,6 @@
 
 <body class="bg-white">
     <div class="flex min-h-screen w-screen">
-        <!-- Sidebar -->
         <div class="w-[20%] border-r border-instagram-border fixed h-full bg-white z-10">
             <div class="p-6">
                 <h1 class="text-2xl font-semibold instagram-logo">Instagram</h1>
@@ -170,11 +169,8 @@
         </div>
 
 
-        <!-- Post Form  -->
         <div id="modalBackdrop" class="fixed inset-0 modal-backdrop hidden z-10 flex items-center justify-center">
-            <!-- Modal Content -->
             <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 overflow-hidden">
-                <!-- Modal Header -->
                 <div class="border-b border-gray-200 p-4 flex justify-between items-center">
                     <button id="closeModalBtn" class="text-red-500  hover:text-red-700 font-semibold">
                         X
@@ -187,9 +183,7 @@
                     </button>
                 </div>
 
-                <!-- Modal Body -->
                 <div class="flex flex-col md:flex-row">
-                    <!-- Left Side - Image Upload/Preview -->
                     <div
                         class="w-full md:w-1/2 border-r border-gray-200 flex flex-col items-center justify-center p-4 bg-gray-50 min-h-[400px]">
                         <div id="uploadContainer" class="flex flex-col items-center justify-center w-full h-full">
@@ -209,9 +203,7 @@
                             src="/placeholder.svg" alt="Preview">
                     </div>
 
-                    <!-- Right Side - Description -->
                     <div class="w-full md:w-1/2 p-4 flex flex-col">
-                        <!-- User Info -->
                         <div class="flex items-center mb-4">
                             <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none"
@@ -223,7 +215,6 @@
                             <span class="ml-2 font-medium" id="newpostusername">username</span>
                         </div>
 
-                        <!-- Description Textarea -->
                         <textarea id="description"
                             class="w-full h-64 resize-none border-0 focus:ring-0 focus:outline-none"
                             placeholder="Write a caption..."></textarea>
@@ -232,7 +223,6 @@
                             <span id="charCount">0</span>/2,200
                         </div>
 
-                        <!-- Additional Options -->
                         <!-- <div class="mt-auto space-y-4">
                             <div class="flex justify-between items-center py-3 border-t border-gray-200">
                                 <span>Add location</span>
@@ -259,14 +249,12 @@
         </div>
 
 
-        <!-- Main Content -->
         <div id="content" class="w-[80%]">
             {% block content %}{% endblock %}
         </div>
 
     </div>
 
-    <!-- Post Modal -->
     <div id="post-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
         <div class="bg-white w-full max-w-4xl h-[90vh] flex rounded-lg overflow-hidden">
             <div class="w-3/5 bg-black flex items-center justify-center">
@@ -303,9 +291,7 @@
 
     <div id="modalOverlay"
         class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-        <!-- Modal Content -->
         <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
-            <!-- Modal Header -->
             <div class="flex justify-between items-center p-4 border-b">
                 <h2 class="text-xl font-semibold text-gray-800">User Information</h2>
                 <button id="closeUsernameModalBtn" class="text-gray-500 hover:text-gray-700">
@@ -317,7 +303,6 @@
                 </button>
             </div>
 
-            <!-- Modal Body -->
             <form id="userForm" class="p-6 space-y-4">
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
@@ -340,11 +325,9 @@
     </div>
 
 
-    <!-- Search Modal (Initially Hidden) -->
     <div id="insta-search-modal"
         class="insta-search-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="insta-search-content bg-white rounded-xl shadow-2xl w-full max-w-md mx-4">
-            <!-- Modal Header with Close Button -->
             <div class="flex justify-between items-center p-4 border-b">
                 <h2 class="text-xl font-semibold">Search Users</h2>
                 <button id="insta-close-search" class="insta-close-btn text-gray-500 hover:text-gray-700">
@@ -356,7 +339,6 @@
                 </button>
             </div>
 
-            <!-- Search Input -->
             <div class="relative p-4">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-7 pointer-events-none">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
@@ -378,22 +360,17 @@
                 </button>
             </div>
 
-            <!-- Search Results -->
             <div id="insta-search-results" class="insta-search-results hidden px-4">
-                <!-- Results will be populated here -->
             </div>
 
-            <!-- Loading Indicator -->
             <div id="insta-loading-indicator" class="insta-loading hidden flex justify-center items-center py-4">
                 <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
             </div>
 
-            <!-- No Results Message -->
             <div id="insta-no-results" class="insta-no-results hidden text-center py-4 text-gray-500">
                 No results found
             </div>
 
-            <!-- Footer -->
             <div class="p-4 border-t text-xs text-gray-500 text-center">
                 Search matches the beginning of profile names
             </div>
@@ -409,35 +386,24 @@
         const modalOverlay = document.getElementById('modalOverlay');
         const userForm = document.getElementById('userForm');
 
-        // Function to close modal
         function closeModal() {
             modalOverlay.classList.add('hidden');
             document.body.classList.remove('overflow-hidden');
         }
         closeUsernameModalBtn.addEventListener('click', closeModal);
 
-        // Close modal when clicking outside the form
         modalOverlay.addEventListener('click', (e) => {
             if (e.target === modalOverlay) {
                 closeModal();
             }
         });
-        // Handle form submission
         userForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const name = document.getElementById('name').value;
             const username = document.getElementById('username').value;
 
-            // console.log('Form submitted:', { name, username });
 
-            // You can add AJAX request here to submit the form data
-
-            // Reset form and close modal
-            // closeModal();
-
-            // Show success message (optional)
-            // alert(`Form submitted successfully!\nName: ${name}\nUsername: ${username}`);
             try {
 
                 const updatedUsernameResponse = await fetch("/updateUserName", {
@@ -564,7 +530,6 @@
 
 
 
-        // Mock API data
         const API_ENDPOINTS = {
             currentUser: "/api/user",
             posts: "/api/posts",
@@ -572,14 +537,7 @@
             suggestedUsers: "/api/suggested-users",
         }
 
-        // // Current user data
-        // currentUser = {
-        //     username: "nithish_reddy27",
-        //     name: "Nithish Reddy",
-        //     avatar: "/placeholder.svg?height=56&width=56",
-        // }
 
-        // Mock posts data
         const postsData = [
             {
                 post_id: "1",
@@ -686,7 +644,6 @@
             },
         ]
 
-        // Mock stories data
         const storiesData = [
             { username: "karthi_vred...", avatar: "/placeholder.svg?height=56&width=56", hasStory: true },
             { username: "mr_confes...", avatar: "/placeholder.svg?height=56&width=56", hasStory: true },
@@ -698,7 +655,6 @@
             { username: "i_shiva...", avatar: "/placeholder.svg?height=56&width=56", hasStory: true },
         ]
 
-        // Mock suggested users data
         const suggestedUsersData = [
             {
                 username: "_nickandcarrie_",
@@ -727,9 +683,7 @@
             },
         ]
 
-        // Fetch data from API (mock implementation)
         async function fetchData(endpoint) {
-            // In a real app, this would be a fetch call to the API
             switch (endpoint) {
                 case API_ENDPOINTS.currentUser:
                     return currentUser
@@ -744,7 +698,6 @@
             }
         }
 
-        // Format number of likes
         function formatLikes(likes) {
             if (likes >= 1000000) {
                 return (likes / 1000000).toFixed(1) + "M"
@@ -756,13 +709,10 @@
 
 
 
-        // Add new comment to a post
         function addNewComment(postId, commentText) {
-            // Find the post
             const post = postsData.find((p) => p.post_id === postId)
 
             if (post) {
-                // Create new comment
                 const newComment = {
                     username: currentUser.username,
                     comment: commentText,
@@ -770,16 +720,13 @@
                     likes: 0,
                 }
 
-                // Add to beginning of comments array (for reverse chronological order)
                 post.comments.unshift(newComment)
 
-                // Re-render posts to show the new comment
                 document.getElementById("posts-container").innerHTML = ""
                 renderPosts()
             }
         }
 
-        // Open post modal
         function openPostModal(post) {
             const modal = document.getElementById("post-modal")
             const modalImage = document.getElementById("modal-image")
@@ -880,25 +827,18 @@
             })
         }
 
-        // Initialize app
         async function initApp() {
-            // Set current user info
             const user = await fetchData(API_ENDPOINTS.currentUser)
 
 
-            // // Render components
-            // await renderStories()
-            // await renderPosts()
-            // await renderSuggestedUsers()
+
         }
 
-        // Start the app
         document.addEventListener("DOMContentLoaded", initApp)
 
     </script>
 
     <script>
-        // DOM Elements
         var file = null
         const openModalBtn = document.getElementById('openModalBtn');
         const closeModalBtn = document.getElementById('closeModalBtn');
@@ -910,7 +850,6 @@
         const charCount = document.getElementById('charCount');
         const submitBtn = document.getElementById('submitBtn');
 
-        // Event Listeners
         openModalBtn.addEventListener('click', openModal);
         closeModalBtn.addEventListener('click', closeModal);
         modalBackdrop.addEventListener('click', (e) => {
@@ -919,17 +858,15 @@
         imageUpload.addEventListener('change', handleImageUpload);
         description.addEventListener('input', updateCharCount);
 
-        // Functions
         function openModal() {
             modalBackdrop.classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            document.body.style.overflow = 'hidden';
         }
 
         function closeModal() {
             modalBackdrop.classList.add('hidden');
-            document.body.style.overflow = ''; // Re-enable scrolling
+            document.body.style.overflow = '';
 
-            // Reset form
             imagePreview.classList.add('hidden');
             uploadContainer.classList.remove('hidden');
             imageUpload.value = '';
@@ -941,7 +878,6 @@
             file = e.target.files[0];
             if (!file) return;
 
-            // Check if file is jpg or png
             if (!['image/jpeg', 'image/png'].includes(file.type)) {
                 alert('Please select a JPG or PNG image.');
                 return;
@@ -961,17 +897,13 @@
             const count = description.value.length;
             charCount.textContent = count;
 
-            // Enable submit button only if there's an image and text
             if (!imagePreview.classList.contains('hidden')) {
                 submitBtn.disabled = false;
             }
         }
 
-        // Form submission
         submitBtn.addEventListener('click', function () {
-            // Here you would typically send the data to a server
-            // For this example, we'll just show an alert
-            // alert('Post created successfully!');
+
             const formData = new FormData();
             formData.append('file_name', file);
             formData.append('description', description.value);
@@ -982,7 +914,7 @@
                 .then(response => {
                     if (response.ok) {
                         alert('File uploaded successfully!');
-                        closeModal(); // Your existing function
+                        closeModal();
                     } else {
                         alert('Failed to upload file.');
                     }
@@ -991,10 +923,8 @@
                     console.error('Error uploading:', error);
                     alert('Error uploading file.');
                 });
-            // console.log("description ", description.value)
         });
 
-        // Drag and drop functionality
         const dropArea = document.getElementById('uploadContainer');
 
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -1050,12 +980,10 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Modal elements
             const searchModal = document.getElementById('insta-search-modal');
             const searchTrigger = document.getElementById('insta-search-trigger');
             const closeSearch = document.getElementById('insta-close-search');
 
-            // Search elements
             const searchInput = document.getElementById('insta-search-input');
             const searchResults = document.getElementById('insta-search-results');
             const loadingIndicator = document.getElementById('insta-loading-indicator');
@@ -1065,19 +993,15 @@
             let users = [];
             let debounceTimer;
 
-            // Fetch users when the page loads
             fetchUsers();
 
-            // Function to fetch users
             async function fetchUsers() {
                 try {
                     loadingIndicator.classList.remove('hidden');
 
-                    // Replace this URL with your actual API endpoint
                     const response = await fetch('/getallusers');
                     const data = await response.json();
                     console.log("Data is ", data)
-                    // For demonstration, we'll use mock data if the fetch fails
                     users = data.users || getMockUsers();
 
                     loadingIndicator.classList.add('hidden');
@@ -1085,12 +1009,10 @@
                     console.error('Error fetching users:', error);
                     loadingIndicator.classList.add('hidden');
 
-                    // Use mock data for demonstration
                     users = getMockUsers();
                 }
             }
 
-            // Function to get mock users for demonstration
             function getMockUsers() {
                 return [
                     { username: 'john_doe', profileName: 'John Doe', profilePic: 'https://i.pravatar.cc/150?img=1' },
@@ -1111,7 +1033,6 @@
                 ];
             }
 
-            // Open search modal
             searchTrigger.addEventListener('click', function () {
                 searchModal.classList.add('active');
                 setTimeout(() => {
@@ -1119,13 +1040,11 @@
                 }, 300);
             });
 
-            // Close search modal
             closeSearch.addEventListener('click', function () {
                 searchModal.classList.remove('active');
                 resetSearch();
             });
 
-            // Close modal when clicking outside
             searchModal.addEventListener('click', function (e) {
                 if (e.target === searchModal) {
                     searchModal.classList.remove('active');
@@ -1133,7 +1052,6 @@
                 }
             });
 
-            // Reset search state
             function resetSearch() {
                 searchInput.value = '';
                 searchResults.classList.add('hidden');
@@ -1141,18 +1059,15 @@
                 clearButton.classList.add('hidden');
             }
 
-            // Search input event listener
             searchInput.addEventListener('input', function () {
                 const searchTerm = this.value.trim();
 
-                // Show/hide clear button
                 if (searchTerm.length > 0) {
                     clearButton.classList.remove('hidden');
                 } else {
                     clearButton.classList.add('hidden');
                 }
 
-                // Debounce search to avoid too many searches while typing
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(() => {
                     if (searchTerm.length > 0) {
@@ -1164,7 +1079,6 @@
                 }, 300);
             });
 
-            // Clear button event listener
             clearButton.addEventListener('click', function () {
                 searchInput.value = '';
                 searchResults.classList.add('hidden');
@@ -1173,15 +1087,12 @@
                 searchInput.focus();
             });
 
-            // Function to search users
             function searchUsers(searchTerm) {
-                // Filter users by profile name (matching the beginning)
                 console.log("searchh term ", searchTerm)
                 const filteredUsers = users.filter(user =>
                     user.profileName?.toLowerCase().startsWith(searchTerm.toLowerCase())
                 );
 
-                // Display results
                 if (filteredUsers.length > 0) {
                     displayResults(filteredUsers);
                     searchResults.classList.remove('hidden');
@@ -1192,7 +1103,6 @@
                 }
             }
 
-            // Function to display search results
             function displayResults(results) {
                 searchResults.innerHTML = '';
 
@@ -1217,13 +1127,9 @@
                     </a>
                 `;
 
-                    // Add click event to result item
                     resultItem.addEventListener('click', function () {
-                        // Handle click on user (e.g., navigate to profile)
                         console.log(`Clicked on user: ${user.username}`);
-                        // You can add navigation or other actions here
 
-                        // Close the modal after selection
                         searchModal.classList.remove('active');
                         resetSearch();
                     });
@@ -1232,7 +1138,6 @@
                 });
             }
 
-            // Close modal with Escape key
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape' && searchModal.classList.contains('active')) {
                     searchModal.classList.remove('active');
@@ -1242,7 +1147,6 @@
         });
     </script>
 
-    <!-- <script type="module" src="../static/firebase-login.js"></script> -->
     <script type="module" src="{{ url_for('static', path='/firebase-login.js') }}"></script>
 
 </body>

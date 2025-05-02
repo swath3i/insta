@@ -125,7 +125,6 @@
 
 <body class="bg-white">
     <div class="flex min-h-screen">
-        <!-- Sidebar -->
         <div class="w-64 border-r border-instagram-border fixed h-full bg-white z-10">
             <div class="p-6">
                 <h1 class="text-2xl font-semibold instagram-logo">Instagram</h1>
@@ -170,11 +169,8 @@
         </div>
 
 
-        <!-- Post Form  -->
         <div id="modalBackdrop" class="fixed inset-0 modal-backdrop hidden z-10 flex items-center justify-center">
-            <!-- Modal Content -->
             <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 overflow-hidden">
-                <!-- Modal Header -->
                 <div class="border-b border-gray-200 p-4 flex justify-between items-center">
                     <button id="closeModalBtn" class="text-gray-500 hover:text-gray-700">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
@@ -191,9 +187,7 @@
                     </button>
                 </div>
 
-                <!-- Modal Body -->
                 <div class="flex flex-col md:flex-row">
-                    <!-- Left Side - Image Upload/Preview -->
                     <div
                         class="w-full md:w-1/2 border-r border-gray-200 flex flex-col items-center justify-center p-4 bg-gray-50 min-h-[400px]">
                         <div id="uploadContainer" class="flex flex-col items-center justify-center w-full h-full">
@@ -213,9 +207,7 @@
                             src="/placeholder.svg" alt="Preview">
                     </div>
 
-                    <!-- Right Side - Description -->
                     <div class="w-full md:w-1/2 p-4 flex flex-col">
-                        <!-- User Info -->
                         <div class="flex items-center mb-4">
                             <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none"
@@ -227,7 +219,6 @@
                             <span class="ml-2 font-medium" id="newpostusername">username</span>
                         </div>
 
-                        <!-- Description Textarea -->
                         <textarea id="description"
                             class="w-full h-64 resize-none border-0 focus:ring-0 focus:outline-none"
                             placeholder="Write a caption..."></textarea>
@@ -261,11 +252,8 @@
                 </div>
             </div>
         </div>
-        <!-- Main Content -->
         <div class="ml-64 flex-1 flex">
-            <!-- Feed -->
             <div class="max-w-xl mx-auto py-4 w-full">
-                <!-- Stories -->
                 <div class=" py-4 border-b border-instagram-border items-center">
                     <!-- <div id="stories-container" class="flex space-x-4"></div> -->
                     <h1 class="text-center text-2xl">Your feed</h1>
@@ -296,13 +284,10 @@
                     </div>
                 </div>
 
-                <!-- Posts -->
                 <div id="posts-container" class="mt-4 space-y-6"></div>
             </div>
 
-            <!-- Right Sidebar -->
             <div class="w-80 p-4 hidden lg:block">
-                <!-- User Profile -->
                 <div class="flex items-center justify-between mb-6">
                     <div class="flex items-center">
                         <img id="current-user-avatar" src="/placeholder.svg?height=56&width=56"
@@ -312,10 +297,8 @@
                             <p id="current-user-name" class="text-gray-500 text-sm">Name</p>
                         </div>
                     </div>
-                    <!-- <button class="text-instagram-blue text-sm font-semibold">Switch</button> -->
                 </div>
 
-                <!-- Suggested for you -->
                 <div class="mb-4">
                     <!-- <div class="flex justify-between items-center mb-2">
                         <span class="text-gray-500 font-semibold text-sm">Suggested for you</span>
@@ -324,27 +307,11 @@
                     <div id="suggested-users-container" class="space-y-3"></div>
                 </div>
 
-                <!-- Footer Links -->
-                <!-- <div class="mt-8">
-                    <div class="flex flex-wrap text-xs text-gray-400 mb-4">
-                        <a href="#" class="mr-2">About</a>
-                        <a href="#" class="mr-2">Help</a>
-                        <a href="#" class="mr-2">Press</a>
-                        <a href="#" class="mr-2">API</a>
-                        <a href="#" class="mr-2">Jobs</a>
-                        <a href="#" class="mr-2">Privacy</a>
-                        <a href="#" class="mr-2">Terms</a>
-                        <a href="#" class="mr-2">Location</a>
-                        <a href="#" class="mr-2">Language</a>
-                        <a href="#" class="mr-2">Meta Verified</a>
-                    </div>
-                    <p class="text-xs text-gray-400">© 2023 INSTAGRAM FROM META</p>
-                </div> -->
+
             </div>
         </div>
     </div>
 
-    <!-- Post Modal -->
     <div id="post-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
         <div class="bg-white w-full max-w-4xl h-[90vh] flex rounded-lg overflow-hidden cursor-pointer">
             <div class="w-3/5 bg-black flex items-center justify-center">
@@ -377,9 +344,7 @@
 
     <div id="modalOverlay"
         class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-        <!-- Modal Content -->
         <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
-            <!-- Modal Header -->
             <div class="flex justify-between items-center p-4 border-b">
                 <h2 class="text-xl font-semibold text-gray-800">User Information</h2>
                 <button id="closeUsernameModalBtn" class="text-gray-500 hover:text-gray-700">
@@ -391,7 +356,6 @@
                 </button>
             </div>
 
-            <!-- Modal Body -->
             <form id="userForm" class="p-6 space-y-4">
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
@@ -414,11 +378,9 @@
     </div>
 
 
-    <!-- Search Modal (Initially Hidden) -->
     <div id="insta-search-modal"
         class="insta-search-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="insta-search-content bg-white rounded-xl shadow-2xl w-full max-w-md mx-4">
-            <!-- Modal Header with Close Button -->
             <div class="flex justify-between items-center p-4 border-b">
                 <h2 class="text-xl font-semibold">Search Users</h2>
                 <button id="insta-close-search" class="insta-close-btn text-gray-500 hover:text-gray-700">
@@ -430,7 +392,6 @@
                 </button>
             </div>
 
-            <!-- Search Input -->
             <div class="relative p-4">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-7 pointer-events-none">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
@@ -452,22 +413,17 @@
                 </button>
             </div>
 
-            <!-- Search Results -->
             <div id="insta-search-results" class="insta-search-results hidden px-4">
-                <!-- Results will be populated here -->
             </div>
 
-            <!-- Loading Indicator -->
             <div id="insta-loading-indicator" class="insta-loading hidden flex justify-center items-center py-4">
                 <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
             </div>
 
-            <!-- No Results Message -->
             <div id="insta-no-results" class="insta-no-results hidden text-center py-4 text-gray-500">
                 No results found
             </div>
 
-            <!-- Footer -->
             <div class="p-4 border-t text-xs text-gray-500 text-center">
                 Search matches the beginning of profile names
             </div>
@@ -1251,16 +1207,13 @@
                     console.log("error")
                 }
 
-                // Add to beginning of comments array (for reverse chronological order)
                 post.comments.unshift(newComment)
 
-                // Re-render posts to show the new comment
                 document.getElementById("posts-container").innerHTML = ""
                 renderPosts()
             }
         }
 
-        // Open post modal
         function openPostModal(post) {
             const modal = document.getElementById("post-modal")
             const modalImage = document.getElementById("modal-image")
@@ -1270,19 +1223,15 @@
             const modalLikes = document.getElementById("modal-likes")
             const modalTime = document.getElementById("modal-time")
 
-            // Set modal content
             console.log(" imageUrls post", post)
 
             modalImage.src = post.imageUrl
             modalUserAvatar.src = post.userAvatar ? post.userAvatar : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
             modalUsername.textContent = post.Username
-            // modalLikes.textContent = formatLikes(post.likes) + " likes"
             modalTime.textContent = post.Date
 
-            // Clear previous comments
             modalComments.innerHTML = ""
 
-            // Add post description as first comment
             const descriptionElement = document.createElement("div")
             descriptionElement.className = "flex mb-4"
 
@@ -1297,28 +1246,18 @@
     <p class="text-xs text-gray-500 mt-1">${post.Date}</p>
   `
 
-            // descriptionElement.appendChild(descriptionAvatar)
-            // descriptionElement.appendChild(descriptionContent)
+
             modalComments.appendChild(descriptionElement)
 
-            // Add separator
-            // const separator = document.createElement("hr")
-            // separator.className = "my-4 border-gray-200"
-            // modalComments.appendChild(separator)
-
-            // Sort comments in reverse chronological order
             const sortedComments = [...post.comments].sort((a, b) => {
-                // Simple sorting based on time string (in a real app, use timestamps)
                 if (a.time.includes("m") && b.time.includes("h")) return -1
                 if (a.time.includes("h") && b.time.includes("m")) return 1
 
-                // Extract numeric values for comparison
                 const aValue = Number.parseInt(a.time)
                 const bValue = Number.parseInt(b.time)
                 return bValue - aValue
             })
 
-            // Add all comments
             sortedComments.forEach((comment) => {
                 const commentElement = document.createElement("div")
                 commentElement.className = "flex mb-4"
@@ -1347,10 +1286,8 @@
                 modalComments.appendChild(commentElement)
             })
 
-            // Show modal
             modal.classList.remove("hidden")
 
-            // Close modal when clicking outside
             modal.addEventListener("click", (e) => {
                 if (e.target === modal) {
                     modal.classList.add("hidden")
@@ -1358,25 +1295,17 @@
             })
         }
 
-        // Initialize app
         async function initApp() {
-            // Set current user info
             const user = await fetchData(API_ENDPOINTS.currentUser)
 
-
-            // Render components
-            // await renderStories()
             await renderPosts()
-            // await renderSuggestedUsers()
         }
 
-        // Start the app
         document.addEventListener("DOMContentLoaded", initApp)
 
     </script>
 
     <script>
-        // DOM Elements
         var file = null
         const openModalBtn = document.getElementById('openModalBtn');
         const closeModalBtn = document.getElementById('closeModalBtn');
@@ -1388,7 +1317,6 @@
         const charCount = document.getElementById('charCount');
         const submitBtn = document.getElementById('submitBtn');
 
-        // Event Listeners
         openModalBtn.addEventListener('click', openModal);
         closeModalBtn.addEventListener('click', closeModal);
         modalBackdrop.addEventListener('click', (e) => {
@@ -1397,17 +1325,15 @@
         imageUpload.addEventListener('change', handleImageUpload);
         description.addEventListener('input', updateCharCount);
 
-        // Functions
         function openModal() {
             modalBackdrop.classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
+            document.body.style.overflow = 'hidden';
         }
 
         function closeModal() {
             modalBackdrop.classList.add('hidden');
-            document.body.style.overflow = ''; // Re-enable scrolling
+            document.body.style.overflow = '';
 
-            // Reset form
             imagePreview.classList.add('hidden');
             uploadContainer.classList.remove('hidden');
             imageUpload.value = '';
@@ -1419,7 +1345,6 @@
             file = e.target.files[0];
             if (!file) return;
 
-            // Check if file is jpg or png
             if (!['image/jpeg', 'image/png'].includes(file.type)) {
                 alert('Please select a JPG or PNG image.');
                 return;
@@ -1439,17 +1364,13 @@
             const count = description.value.length;
             charCount.textContent = count;
 
-            // Enable submit button only if there's an image and text
             if (!imagePreview.classList.contains('hidden')) {
                 submitBtn.disabled = false;
             }
         }
 
-        // Form submission
         submitBtn.addEventListener('click', function () {
-            // Here you would typically send the data to a server
-            // For this example, we'll just show an alert
-            // alert('Post created successfully!');
+
             const formData = new FormData();
             formData.append('file_name', file);
             formData.append('description', description.value);
@@ -1460,7 +1381,7 @@
                 .then(response => {
                     if (response.ok) {
                         alert('File uploaded successfully!');
-                        closeModal(); // Your existing function
+                        closeModal();
                     } else {
                         alert('Failed to upload file.');
                     }
@@ -1469,10 +1390,8 @@
                     console.error('Error uploading:', error);
                     alert('Error uploading file.');
                 });
-            // console.log("description ", description.value)
         });
 
-        // Drag and drop functionality
         const dropArea = document.getElementById('uploadContainer');
 
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -1508,7 +1427,6 @@
 
             if (!file) return;
 
-            // Check if file is jpg or png
             if (!['image/jpeg', 'image/png'].includes(file.type)) {
                 alert('Please select a JPG or PNG image.');
                 return;
@@ -1528,12 +1446,10 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Modal elements
             const searchModal = document.getElementById('insta-search-modal');
             const searchTrigger = document.getElementById('insta-search-trigger');
             const closeSearch = document.getElementById('insta-close-search');
 
-            // Search elements
             const searchInput = document.getElementById('insta-search-input');
             const searchResults = document.getElementById('insta-search-results');
             const loadingIndicator = document.getElementById('insta-loading-indicator');
@@ -1543,19 +1459,15 @@
             let users = [];
             let debounceTimer;
 
-            // Fetch users when the page loads
             fetchUsers();
 
-            // Function to fetch users
             async function fetchUsers() {
                 try {
                     loadingIndicator.classList.remove('hidden');
 
-                    // Replace this URL with your actual API endpoint
                     const response = await fetch('/getallusers');
                     const data = await response.json();
                     console.log("Data is ", data)
-                    // For demonstration, we'll use mock data if the fetch fails
                     users = data.users || getMockUsers();
 
                     loadingIndicator.classList.add('hidden');
@@ -1563,12 +1475,10 @@
                     console.error('Error fetching users:', error);
                     loadingIndicator.classList.add('hidden');
 
-                    // Use mock data for demonstration
                     users = getMockUsers();
                 }
             }
 
-            // Function to get mock users for demonstration
             function getMockUsers() {
                 return [
                     { username: 'john_doe', profileName: 'John Doe', profilePic: 'https://i.pravatar.cc/150?img=1' },
@@ -1589,7 +1499,6 @@
                 ];
             }
 
-            // Open search modal
             searchTrigger.addEventListener('click', function () {
                 searchModal.classList.add('active');
                 setTimeout(() => {
@@ -1597,13 +1506,11 @@
                 }, 300);
             });
 
-            // Close search modal
             closeSearch.addEventListener('click', function () {
                 searchModal.classList.remove('active');
                 resetSearch();
             });
 
-            // Close modal when clicking outside
             searchModal.addEventListener('click', function (e) {
                 if (e.target === searchModal) {
                     searchModal.classList.remove('active');
@@ -1611,7 +1518,6 @@
                 }
             });
 
-            // Reset search state
             function resetSearch() {
                 searchInput.value = '';
                 searchResults.classList.add('hidden');
@@ -1619,18 +1525,15 @@
                 clearButton.classList.add('hidden');
             }
 
-            // Search input event listener
             searchInput.addEventListener('input', function () {
                 const searchTerm = this.value.trim();
 
-                // Show/hide clear button
                 if (searchTerm.length > 0) {
                     clearButton.classList.remove('hidden');
                 } else {
                     clearButton.classList.add('hidden');
                 }
 
-                // Debounce search to avoid too many searches while typing
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(() => {
                     if (searchTerm.length > 0) {
@@ -1642,7 +1545,6 @@
                 }, 300);
             });
 
-            // Clear button event listener
             clearButton.addEventListener('click', function () {
                 searchInput.value = '';
                 searchResults.classList.add('hidden');
@@ -1651,15 +1553,12 @@
                 searchInput.focus();
             });
 
-            // Function to search users
             function searchUsers(searchTerm) {
-                // Filter users by profile name (matching the beginning)
                 console.log("search term ", searchTerm)
                 const filteredUsers = users.filter(user =>
                     user.profileName?.toLowerCase().startsWith(searchTerm.toLowerCase())
                 );
 
-                // Display results
                 if (filteredUsers.length > 0) {
                     displayResults(filteredUsers);
                     searchResults.classList.remove('hidden');
@@ -1670,7 +1569,6 @@
                 }
             }
 
-            // Function to display search results
             function displayResults(results) {
                 searchResults.innerHTML = '';
 
@@ -1695,13 +1593,9 @@
                     </a>
                 `;
 
-                    // Add click event to result item
                     resultItem.addEventListener('click', function () {
-                        // Handle click on user (e.g., navigate to profile)
                         console.log(`Clicked on user: ${user.username}`);
-                        // You can add navigation or other actions here
 
-                        // Close the modal after selection
                         searchModal.classList.remove('active');
                         resetSearch();
                     });
@@ -1710,7 +1604,6 @@
                 });
             }
 
-            // Close modal with Escape key
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape' && searchModal.classList.contains('active')) {
                     searchModal.classList.remove('active');
@@ -1720,7 +1613,6 @@
         });
     </script>
 
-    <!-- <script type="module" src="../static/firebase-login.js"></script> -->
     <script type="module" src="{{ url_for('static', path='/firebase-login.js') }}"></script>
 
 </body>
